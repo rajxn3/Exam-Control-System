@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Result - Exam Control System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK Configuration -->
+    <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"
+      }
+    }
+    </script>
+    <script type="module">
+        import { initializeApp } from "firebase/app";
+        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, limit } from "firebase/firestore";
+        import { getAuth } from "firebase/auth";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCWP3hxl6VwnwMt9eO3N5OdXR97dJcW3h4",
+          authDomain: "exam-control-system.firebaseapp.com",
+          projectId: "exam-control-system",
+          storageBucket: "exam-control-system.firebasestorage.app",
+          messagingSenderId: "130227673327",
+          appId: "1:130227673327:web:8ebc5f9d82071317ff631a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        window.firebaseApp = app;
+        window.db = db;
+        window.auth = auth;
+        window.firebaseFirestore = { collection, addDoc, getDocs, query, where, orderBy, limit };
+
+        console.log("🔥 Firebase initialized on result page");
+    </script>
+
+    <style>
+        :root {
+            --primary-dark: #09121d;
+            --navy-blue: #1e3c72;
+            --navy-light: #2a4a8f;
+            --gold: #d4af37;
+            --gold-light: #f2d06b;
+            --platinum: #f5f7fa;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --info: #60a5fa;
+            --dark-card: #1a2436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #e8d5a3;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* === FLOWER CANVAS BACKGROUND === */
+        #flowerCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .result-container {
+            background: rgba(50, 30, 5, 0.65);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 20px 50px rgba(120, 80, 0, 0.4);
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            animation: slideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .result-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 30px;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 8px solid var(--gold);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 40px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+            transition: all 0.5s ease;
+        }
+
+        .percentage {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+
+        .score-label {
+            color: var(--gold-light);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .result-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .result-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--gold);
+            transform: translateY(-5px);
+        }
+
+        .item-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .item-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .item-value.success { color: var(--success); }
+        .item-value.danger { color: var(--danger); }
+
+        .continue-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            color: var(--primary-dark);
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .confetti {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @media (max-width: 480px) {
+            .result-container { padding: 30px 20px; }
+            .result-grid { grid-template-columns: 1fr; }
+            .score-circle { width: 160px; height: 160px; }
+            .percentage { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Broken Glass Canvas Background -->
+    <!-- Animated Flower Canvas Background -->
+    <canvas id="flowerCanvas"></canvas>
+
+    <div class="result-container">
+        <div class="result-header">
+            <h1 id="headerTitle">Exam Results</h1>
+        </div>
+
+        <div class="score-circle" id="scoreCircle">
+            <div class="percentage" id="percentage">0%</div>
+            <div class="score-label">Final Score</div>
+        </div>
+
+        <div class="result-grid">
+            <div class="result-item">
+                <span class="item-label">Obtained Marks</span>
+                <div class="item-value" id="marks">0 / 0</div>
+            </div>
+            <div class="result-item">
+                <span class="item-label">Questions Attempted</span>
+                <div class="item-value" id="attempted">0 / 0</div>
+            </div>
+            <div class="result-item">
+                <span class="item-label">Time Taken</span>
+                <div class="item-value" id="timeTaken">00:00:00</div>
+            </div>
+            <div class="result-item">
+                <span class="item-label">Total Violations</span>
+                <div class="item-value" id="violations">0</div>
+            </div>
+        </div>
+
+        <div class="status-message" id="statusMessage" style="margin-bottom: 30px; font-weight: 500;">
+            Excellent work! You have successfully completed the exam.
+        </div>
+
+        <button class="continue-btn" onclick="goToDashboard()">
+            <span>Continue to Dashboard</span>
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <script>
+        (function () {
+            const canvas = document.getElementById('flowerCanvas');
+            const ctx = canvas.getContext('2d');
+            let W, H, frame = 0;
+
+            function resize() {
+                W = canvas.width = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+            }
+
+            // ---------- Background gradient (warm golden/cream) ----------
+            function drawBg() {
+                const grad = ctx.createLinearGradient(0, 0, W, H);
+                grad.addColorStop(0, '#f5e4b0');
+                grad.addColorStop(0.4, '#e8cc80');
+                grad.addColorStop(0.7, '#d4a840');
+                grad.addColorStop(1, '#b8860b');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, W, H);
+
+                // Soft radial glow at center
+                const rg = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, Math.min(W, H) * 0.65);
+                rg.addColorStop(0, 'rgba(255,245,200,0.55)');
+                rg.addColorStop(1, 'rgba(180,120,0,0)');
+                ctx.fillStyle = rg;
+                ctx.fillRect(0, 0, W, H);
+            }
+
+            // ---------- Draw one lotus petal ----------
+            function drawPetal(ctx, cx, cy, len, width, angle, alpha, color) {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle);
+                ctx.globalAlpha = alpha;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(
+                    width * 0.6, -len * 0.3,
+                    width * 0.6, -len * 0.7,
+                    0, -len
+                );
+                ctx.bezierCurveTo(
+                    -width * 0.6, -len * 0.7,
+                    -width * 0.6, -len * 0.3,
+                    0, 0
+                );
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+                // Petal shine
+                const shine = ctx.createLinearGradient(0, 0, 0, -len);
+                shine.addColorStop(0, 'rgba(255,255,220,0.0)');
+                shine.addColorStop(0.4, 'rgba(255,255,200,0.18)');
+                shine.addColorStop(1, 'rgba(255,255,210,0.0)');
+                ctx.fillStyle = shine;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // ---------- Draw one lotus flower ----------
+            function drawFlower(cx, cy, size, baseAngle, phasePetals, alpha) {
+                const petalCount = 8;
+                const outerColor = `rgba(180,120,10,${alpha * 0.85})`;
+                const innerColor = `rgba(220,160,30,${alpha * 0.9})`;
+                const centreColor = `rgba(240,200,60,${alpha})`;
+
+                for (let i = 0; i < petalCount; i++) {
+                    const ang = baseAngle + (i / petalCount) * Math.PI * 2;
+                    const waver = Math.sin(phasePetals + i * 0.7) * 0.04;
+                    drawPetal(ctx, cx, cy, size, size * 0.45, ang + waver,
+                        alpha * (0.7 + 0.25 * Math.sin(phasePetals + i)), outerColor);
+                }
+                // Inner ring
+                for (let i = 0; i < petalCount; i++) {
+                    const ang = baseAngle + (i / petalCount) * Math.PI * 2 + Math.PI / petalCount;
+                    const waver = Math.sin(phasePetals * 1.2 + i * 0.5) * 0.05;
+                    drawPetal(ctx, cx, cy, size * 0.65, size * 0.32, ang + waver,
+                        alpha * 0.85, innerColor);
+                }
+                // Centre disc
+                ctx.save();
+                ctx.globalAlpha = alpha;
+                ctx.beginPath();
+                ctx.arc(cx, cy, size * 0.18, 0, Math.PI * 2);
+                const discGrad = ctx.createRadialGradient(cx - size * 0.05, cy - size * 0.05, 0, cx, cy, size * 0.18);
+                discGrad.addColorStop(0, '#fff0a0');
+                discGrad.addColorStop(1, centreColor);
+                ctx.fillStyle = discGrad;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // ---------- Draw a leaf ----------
+            function drawLeaf(cx, cy, len, angle, alpha) {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle);
+                ctx.globalAlpha = alpha * 0.75;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(len * 0.35, -len * 0.25, len * 0.35, -len * 0.75, 0, -len);
+                ctx.bezierCurveTo(-len * 0.35, -len * 0.75, -len * 0.35, -len * 0.25, 0, 0);
+                ctx.closePath();
+                ctx.fillStyle = `rgba(140,95,5,0.6)`;
+                ctx.fill();
+                // Midrib
+                ctx.strokeStyle = `rgba(100,65,0,0.4)`;
+                ctx.lineWidth = 0.8;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(0, -len);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // ---------- Floating sparkles ----------
+            const SPARKS = Array.from({ length: 55 }, () => ({
+                x: Math.random(), y: Math.random(),
+                r: 0.8 + Math.random() * 2,
+                speed: 0.0002 + Math.random() * 0.0005,
+                angle: -Math.PI / 2 + (Math.random() - 0.5) * 0.8,
+                phase: Math.random() * Math.PI * 2,
+                alpha: 0.2 + Math.random() * 0.5,
+            }));
+
+            // ---------- Floating flowers ----------
+            const FLOWERS = Array.from({ length: 7 }, (_, i) => ({
+                x: 0.05 + Math.random() * 0.9,
+                y: 0.5 + Math.random() * 0.7,       // start below view
+                size: 28 + Math.random() * 45,
+                speed: 0.00018 + Math.random() * 0.00025,
+                drift: (Math.random() - 0.5) * 0.0002,
+                phase: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.008,
+                rot: Math.random() * Math.PI * 2,
+                alpha: 0.55 + Math.random() * 0.35,
+            }));
+
+            // ---------- Corner decorative flowers (static large) ----------
+            const DECO = [
+                { x: 0.82, y: 0.75, size: 90, rot: -0.4, alpha: 0.55 },
+                { x: 0.10, y: 0.20, size: 65, rot: 0.6, alpha: 0.45 },
+                { x: 0.90, y: 0.10, size: 50, rot: 1.2, alpha: 0.35 },
+            ];
+
+            // ---------- Main draw loop ----------
+            function draw() {
+                frame++;
+                ctx.clearRect(0, 0, W, H);
+
+                drawBg();
+
+                // Corner / decorative static flowers
+                DECO.forEach(d => {
+                    const pulse = 0.97 + 0.03 * Math.sin(frame * 0.015 + d.rot);
+                    drawFlower(d.x * W, d.y * H, d.size * pulse, d.rot + frame * 0.003, frame * 0.012, d.alpha);
+                    // Leaves
+                    drawLeaf(d.x * W, d.y * H, d.size * 1.3, d.rot + 0.9 + frame * 0.002, d.alpha);
+                    drawLeaf(d.x * W, d.y * H, d.size * 1.1, d.rot - 0.6 + frame * 0.002, d.alpha);
+                });
+
+                // Floating moving flowers
+                FLOWERS.forEach(f => {
+                    f.y -= f.speed;
+                    f.x += f.drift;
+                    f.rot += f.rotSpeed;
+                    f.phase += 0.01;
+                    if (f.y < -0.15) { f.y = 1.15; f.x = 0.05 + Math.random() * 0.9; }
+                    if (f.x < -0.1 || f.x > 1.1) f.drift *= -1;
+
+                    const wobble = Math.sin(f.phase) * 0.003;
+                    drawFlower(f.x * W, f.y * H, f.size, f.rot, f.phase, f.alpha);
+                    drawLeaf(f.x * W, f.y * H, f.size * 1.2, f.rot + 0.9 + wobble, f.alpha * 0.8);
+                    drawLeaf(f.x * W, f.y * H, f.size * 1.0, f.rot - 0.7 - wobble, f.alpha * 0.7);
+                });
+
+                // Sparkles
+                SPARKS.forEach(s => {
+                    s.y -= s.speed;
+                    s.x += Math.sin(s.phase + frame * 0.02) * 0.0003;
+                    if (s.y < -0.02) { s.y = 1.02; s.x = Math.random(); }
+                    const tw = (Math.sin(s.phase + frame * 0.04) + 1) / 2;
+                    ctx.save();
+                    ctx.globalAlpha = s.alpha * tw;
+                    ctx.fillStyle = `rgba(255,240,150,1)`;
+                    ctx.shadowColor = 'rgba(255,220,80,0.9)';
+                    ctx.shadowBlur = 6;
+                    ctx.beginPath();
+                    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                requestAnimationFrame(draw);
+            }
+
+            window.addEventListener('resize', resize);
+            resize();
+            draw();
+        })();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const results = JSON.parse(localStorage.getItem('lastExamResults'));
+            
+            if (!results) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            // Update UI with results
+            document.getElementById('percentage').textContent = results.percentage + '%';
+            document.getElementById('marks').textContent = `${results.score} / ${results.totalMarks}`;
+            document.getElementById('attempted').textContent = `${results.questionsAttempted} / ${results.totalQuestions}`;
+            document.getElementById('violations').textContent = results.violations;
+            
+            const timeTaken = formatTime(results.timeTaken);
+            document.getElementById('timeTaken').textContent = timeTaken;
+
+            // Apply conditional styling
+            const scoreCircle = document.getElementById('scoreCircle');
+            const violationsValue = document.getElementById('violations');
+            const statusMessage = document.getElementById('statusMessage');
+            const headerTitle = document.getElementById('headerTitle');
+
+            if (results.status === 'Terminated') {
+                headerTitle.textContent = 'Exam Terminated';
+                headerTitle.style.color = 'var(--danger)';
+                scoreCircle.style.borderColor = 'var(--danger)';
+                statusMessage.textContent = `This exam was terminated due to a proctoring violation: ${results.reason}`;
+                statusMessage.style.color = 'var(--danger)';
+                document.getElementById('percentage').style.color = 'var(--danger)';
+            } else {
+                if (results.percentage >= 80) {
+                    scoreCircle.style.borderColor = 'var(--success)';
+                    statusMessage.textContent = 'Outstanding! You showed great mastery of the subject.';
+                    statusMessage.style.color = 'var(--success)';
+                } else if (results.percentage >= 50) {
+                    scoreCircle.style.borderColor = 'var(--info)';
+                    statusMessage.textContent = 'Well done! You have passed the exam successfully.';
+                    statusMessage.style.color = 'var(--info)';
+                } else {
+                    scoreCircle.style.borderColor = 'var(--danger)';
+                    statusMessage.textContent = 'Performance Below Threshold';
+                    statusMessage.style.color = 'var(--danger)';
+                }
+            }
+
+            if (results.violations > 0) {
+                violationsValue.className = 'item-value danger';
+            } else {
+                violationsValue.className = 'item-value success';
+            }
+        });
+
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function goToDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+
+</html>

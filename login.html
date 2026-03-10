@@ -1,0 +1,1796 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Login - Exam Control System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Firebase SDK Configuration -->
+    <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"
+      }
+    }
+    </script>
+    <script type="module">
+        import { initializeApp } from "firebase/app";
+        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, limit, onSnapshot } from "firebase/firestore";
+        import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCWP3hxl6VwnwMt9eO3N5OdXR97dJcW3h4",
+          authDomain: "exam-control-system.firebaseapp.com",
+          projectId: "exam-control-system",
+          storageBucket: "exam-control-system.firebasestorage.app",
+          messagingSenderId: "130227673327",
+          appId: "1:130227673327:web:8ebc5f9d82071317ff631a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Expose to window for login.js
+        window.firebaseApp = app;
+        window.db = db;
+        window.auth = auth;
+        window.firebaseFirestore = { collection, addDoc, getDocs, query, where, orderBy, limit, onSnapshot };
+        window.firebaseAuth = { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup };
+
+        console.log("🔥 Firebase & Firestore initialized and exposed");
+    </script>
+
+
+    <style>
+        :root {
+            --primary-dark: #09121d;
+            --navy-blue: #1e3c72;
+            --gold: #d4af37;
+            --gold-light: #f2d06b;
+            --platinum: #f5f7fa;
+            --success-green: #4ade80;
+        }
+
+        body {
+            background-color: #e8d5a3;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* === FLOWER CANVAS BACKGROUND === */
+        #flowerCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* --- MAIN LOGIN CONTAINER (MEDIUM SIZE) --- */
+        .login-container {
+            display: flex;
+            width: 100%;
+            max-width: 860px;
+            min-height: 540px;
+            background: transparent;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(120, 80, 0, 0.35), 0 0 40px rgba(180, 130, 20, 0.2);
+            border: 1px solid rgba(180, 130, 20, 0.5);
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(2px);
+        }
+
+        /* --- LEFT PANEL --- */
+        .left-panel {
+            flex: 1;
+            background: rgba(80, 50, 5, 0.55);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            color: white;
+            padding: 35px 40px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(180, 130, 20, 0.4);
+            position: relative;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #f5d87a;
+        }
+
+        .logo span {
+            color: #ffffff;
+            font-style: italic;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            color: #aaa;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .exam-info {
+            margin-top: auto;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+        }
+
+        .exam-info h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .exam-details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .exam-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-label {
+            color: var(--gold-light);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .detail-value {
+            color: #eee;
+            font-size: 0.95rem;
+        }
+
+        /* --- RIGHT PANEL --- */
+        .right-panel {
+            flex: 1.2;
+            padding: 40px 50px;
+            background: rgba(50, 30, 5, 0.38);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .welcome-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem;
+            color: #f5e8b0;
+            margin-bottom: 6px;
+            text-align: center;
+            text-shadow: 0 2px 15px rgba(180, 130, 10, 0.5);
+        }
+
+        .welcome-subtitle {
+            color: rgba(230, 205, 130, 0.85);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        /* Role Selection */
+        .role-selection {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid rgba(180, 130, 20, 0.45);
+            background: rgba(255, 220, 100, 0.07);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(245, 220, 140, 0.9);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .role-btn i {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .role-btn.active {
+            background: rgba(160, 110, 0, 0.6);
+            color: #fff8e0;
+            border-color: #c8a020;
+            box-shadow: 0 0 18px rgba(200, 160, 30, 0.35), 0 8px 18px rgba(0, 0, 0, 0.3);
+        }
+
+        .role-btn:hover:not(.active) {
+            border-color: #c8a020;
+            background: rgba(200, 160, 30, 0.14);
+            transform: translateY(-2px);
+        }
+
+        .login-card {
+            background: rgba(255, 240, 180, 0.07);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 28px 32px;
+            box-shadow: 0 8px 40px rgba(120, 80, 0, 0.3), inset 0 1px 0 rgba(255, 220, 100, 0.15);
+            border: 1px solid rgba(180, 130, 20, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+            color: rgba(245, 220, 140, 0.95);
+            font-size: 0.88rem;
+        }
+
+        /* INPUT BOXES */
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid rgba(180, 130, 20, 0.45);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            background: rgba(255, 230, 130, 0.08);
+            color: #fff;
+            height: 50px;
+            box-sizing: border-box;
+            backdrop-filter: blur(6px);
+        }
+
+        .form-input::placeholder {
+            color: rgba(220, 190, 100, 0.5);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #c8a020;
+            background: rgba(255, 220, 80, 0.13);
+            box-shadow: 0 0 0 3px rgba(200, 160, 30, 0.2), 0 0 15px rgba(200, 160, 30, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(200, 160, 30, 0.85);
+            font-size: 1.1rem;
+        }
+
+        .input-icon input {
+            padding-left: 55px;
+            /* More padding for icons */
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #c8a020, #e8c840);
+            color: #3a2500;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            height: 52px;
+            box-sizing: border-box;
+            box-shadow: 0 6px 20px rgba(180, 130, 0, 0.4);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(180, 130, 0, 0.5);
+        }
+
+        /* GOOGLE LOGIN BUTTON */
+        .google-login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #ffffff;
+            color: #444;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .google-login-btn:hover {
+            background: #f1f1f1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .google-login-btn i {
+            color: #DB4437;
+            /* Google Red */
+            font-size: 1.1rem;
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            border: 3px solid rgba(9, 18, 29, 0.2);
+            border-top: 3px solid var(--primary-dark);
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-message {
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .demo-credentials {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 220, 100, 0.06);
+            border-radius: 10px;
+            border-left: 3px solid #c8a020;
+        }
+
+        .demo-credentials h4 {
+            color: #e8c840;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .demo-credentials p {
+            margin: 5px 0;
+            color: rgba(240, 210, 140, 0.8);
+            font-size: 0.82rem;
+        }
+
+        .demo-credentials strong {
+            color: rgba(255, 230, 160, 0.95);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-link a {
+            color: rgba(212, 175, 55, 0.9);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-link a:hover {
+            color: var(--gold-light);
+            text-decoration: underline;
+        }
+
+        /* --- SUCCESS OVERLAY --- */
+        .success-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            background: rgba(5, 15, 40, 0.75);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            padding: 50px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .success-overlay.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* --- SYSTEM STATUS BAR --- */
+        .system-status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(13, 27, 42, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 10px 40px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            z-index: 100;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            box-sizing: border-box;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #4ade80;
+            display: inline-block;
+        }
+
+        .status-dot.pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.gmail {
+            background: #EA4335;
+            box-shadow: 0 0 10px #EA4335;
+        }
+
+        #fetchGmailBtn {
+            background: transparent;
+            color: #1a73e8;
+            border: 1px solid #dadce0;
+            padding: 8px 15px;
+            font-size: 13px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        #fetchGmailBtn:hover {
+            background: #f8f9fa;
+            border-color: #d2e3fc;
+        }
+
+        #fetchGmailBtn i {
+            color: #EA4335;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.4;
+            }
+        }
+
+        #authHeader {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        #authSubheader {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* GOOGLE LIVE LOGIN MODAL */
+        .google-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            backdrop-filter: blur(5px);
+        }
+
+        .google-modal {
+            background: #ffffff;
+            width: 450px;
+            padding: 48px 40px 36px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            font-family: 'Roboto', arial, sans-serif;
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .google-logo-img {
+            width: 75px;
+            margin: 0 auto 12px;
+        }
+
+        .google-title {
+            font-size: 24px;
+            font-weight: 400;
+            color: #202124;
+            margin-bottom: 8px;
+        }
+
+        .google-subtitle {
+            font-size: 16px;
+            color: #202124;
+            margin-bottom: 32px;
+        }
+
+        .google-profile-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 5px 10px;
+            border: 1px solid #dadce0;
+            border-radius: 20px;
+            width: fit-content;
+            margin: 0 auto 25px;
+            font-size: 14px;
+            color: #3c4043;
+            font-weight: 500;
+        }
+
+        .google-profile-pic {
+            width: 20px;
+            height: 20px;
+            background: #1a73e8;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .google-input-container {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .google-input {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 16px;
+            color: #202124;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .google-input:focus {
+            border: 2px solid #1a73e8;
+            padding: 12px 14px;
+        }
+
+        .google-forgot {
+            color: #1a73e8;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: left;
+            display: block;
+            margin-bottom: 40px;
+            text-decoration: none;
+        }
+
+        /* ACCOUNT CHOOSER STYLES */
+        .google-account-list {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .google-account-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            cursor: pointer;
+            border-bottom: 1px solid #dadce0;
+            transition: background 0.2s;
+        }
+
+        .google-account-item:hover {
+            background: #f8f9fa;
+        }
+
+        .google-account-item:last-child {
+            border-bottom: none;
+        }
+
+        .google-account-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            overflow: hidden;
+            background: #f1f3f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .google-account-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .google-account-avatar i {
+            font-size: 20px;
+            color: #5f6368;
+        }
+
+        .google-account-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .google-account-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #3c4043;
+        }
+
+        .google-account-email {
+            font-size: 12px;
+            color: #70757a;
+        }
+
+        .google-account-footer-links {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #5f6368;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .google-account-footer-links a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+
+        .google-modal-footer-nav {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            font-size: 12px;
+            color: #70757a;
+        }
+
+        .google-modal-footer-nav div {
+            cursor: pointer;
+        }
+
+        .google-modal-footer-nav div:hover {
+            color: #202124;
+        }
+
+        .google-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .otp-input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .otp-code {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .otp-code:focus {
+            border: 2px solid #1a73e8;
+        }
+
+        /* SECURITY SCANNER STYLING */
+        .scanner-container {
+            margin: 20px 0;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .scan-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: #5f6368;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+        }
+
+        .scan-item.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scan-icon {
+            font-size: 14px;
+        }
+
+        .scan-icon.scanning {
+            color: #1a73e8;
+            animation: fa-spin 2s infinite linear;
+        }
+
+        .scan-icon.done {
+            color: #1e8e3e;
+        }
+
+        .progress-bar-mini {
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill-mini {
+            height: 100%;
+            background: #1a73e8;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* SECURITY HELP SECTION */
+        .google-help-screen {
+            display: none;
+            text-align: left;
+            font-size: 14px;
+            color: #3c4043;
+            overflow-y: auto;
+            max-height: 450px;
+            padding-right: 10px;
+        }
+
+        .google-help-screen h3 {
+            font-size: 18px;
+            font-weight: 500;
+            color: #202124;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .help-item {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .help-item:last-child {
+            border-bottom: none;
+        }
+
+        .help-title {
+            font-weight: 600;
+            color: #202124;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .help-desc {
+            line-height: 1.5;
+            color: #5f6368;
+        }
+
+        .google-help-back {
+            color: #1a73e8;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        /* SIMULATED TOAST */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: -350px;
+            width: 300px;
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Poppins', sans-serif;
+            transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast-notification.active {
+            right: 20px;
+        }
+
+        .toast-icon {
+            background: #1a73e8;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .google-create-account {
+            color: #1a73e8;
+            font-weight: 500;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .google-next-btn {
+            background: #1a73e8;
+            color: #fff;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .google-next-btn:hover {
+            background: #1765cc;
+            box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302), 0 1px 3px 1px rgba(60, 64, 67, 0.149);
+        }
+
+        .google-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #5f6368;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 850px) {
+            .login-container {
+                flex-direction: column;
+                min-height: auto;
+            }
+
+            .left-panel {
+                padding: 30px;
+                border-right: none;
+                border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            }
+
+            .right-panel {
+                padding: 40px;
+            }
+
+            .login-card {
+                padding: 30px;
+            }
+
+            .role-selection {
+                flex-direction: column;
+            }
+
+            /* Adjust input height for mobile */
+            .form-input {
+                height: 56px;
+                padding: 18px 16px;
+                font-size: 1rem;
+            }
+
+            .login-btn {
+                height: 58px;
+                padding: 18px;
+            }
+
+            .input-icon i {
+                font-size: 1.1rem;
+                left: 16px;
+            }
+
+            .input-icon input {
+                padding-left: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .left-panel,
+            .right-panel {
+                padding: 25px;
+            }
+
+            .login-card {
+                padding: 25px;
+            }
+
+            .logo {
+                font-size: 2.2rem;
+            }
+
+            .welcome-title {
+                font-size: 1.8rem;
+            }
+
+            /* Further adjust input height for small screens */
+            .form-input {
+                height: 54px;
+                padding: 16px 14px;
+                font-size: 0.95rem;
+            }
+
+            .login-btn {
+                height: 56px;
+                padding: 16px;
+                font-size: 1rem;
+            }
+
+            .input-icon i {
+                font-size: 1rem;
+                left: 14px;
+            }
+
+            .input-icon input {
+                padding-left: 45px;
+            }
+
+            .form-group {
+                margin-bottom: 25px;
+            }
+        }
+        /* CORNER LOGO DISPLAY - CIRCULAR ICON ONLY */
+        .corner-logo {
+            position: fixed;
+            top: 25px;
+            right: 35px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.95);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .corner-logo:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            background: #ffffff;
+            border-color: #d4af37;
+        }
+
+        .corner-logo img {
+            height: 65px;
+            width: 65px;
+            object-fit: contain;
+        }
+
+        @media (max-width: 1100px) {
+            .corner-logo {
+                top: 15px;
+                right: 15px;
+                width: 65px;
+                height: 65px;
+            }
+            .corner-logo img {
+                height: 50px;
+                width: 50px;
+            }
+        }
+
+        @media (max-width: 850px) {
+             .corner-logo {
+                position: absolute;
+                background: white;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+             }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Broken Glass Canvas Background -->
+    <!-- Animated Flower Canvas Background -->
+    <canvas id="flowerCanvas"></canvas>
+
+    <!-- Institutional Corner Logo -->
+    <a href="index.html" class="corner-logo">
+        <img src="logo.png" alt="Logo">
+    </a>
+
+    <div class="login-container">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <h1 class="logo">Exam<span>Control</span></h1>
+            <p class="tagline">Secure Examination Portal</p>
+
+            <div class="exam-info">
+                <h3><i class="fas fa-clipboard-list"></i> Exam Details</h3>
+                <div class="exam-details">
+                    <div class="exam-detail">
+                        <span class="detail-label">Exam Type:</span>
+                        <span class="detail-value">Online Proctored</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-dot" id="gmailStatusDot"></span>
+                        <span>Gmail Connectivity: <b id="gmailStatusText" style="color: #fff;">PENDING</b></span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-dot pulse"></span>
+                        <span>Server: <b style="color: #fff;">ONLINE</b></span>
+                    </div>
+                    <div class="exam-detail">
+                        <span class="detail-label">Duration:</span>
+                        <span class="detail-value">2 Hours</span>
+                    </div>
+                    <div class="exam-detail">
+                        <span class="detail-label">Questions:</span>
+                        <span class="detail-value">60 Multiple Choice</span>
+                    </div>
+                    <div class="exam-detail">
+                        <span class="detail-label">Requirements:</span>
+                        <span class="detail-value">Webcam & Microphone</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: auto;">
+                <h4 style="color: #ddd; margin-bottom: 15px; font-size: 0.9rem;">Important Instructions:</h4>
+                <ul style="list-style: none; padding: 0; font-size: 0.85rem; color: #aaa;">
+                    <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-camera" style="color: var(--gold);"></i>
+                        <span>Webcam must be enabled</span>
+                    </li>
+                    <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-ban" style="color: var(--gold);"></i>
+                        <span>No switching browser tabs</span>
+                    </li>
+                    <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-shield-alt" style="color: var(--gold);"></i>
+                        <span>AI proctoring is active</span>
+                    </li>
+                    <li style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-clock" style="color: var(--gold);"></i>
+                        <span>Timer starts upon login</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <h2 class="welcome-title">Portal Access</h2>
+            <p class="welcome-subtitle">Select your role and enter credentials</p>
+
+            <!-- Role Selection -->
+            <div class="role-selection">
+                <div class="role-btn active" data-role="student" onclick="selectRole('student')">
+                    <i class="fas fa-user-graduate"></i>
+                    Student
+                </div>
+                <div class="role-btn" data-role="instructor" onclick="selectRole('instructor')">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    Instructor
+                </div>
+                <div class="role-btn" data-role="admin" onclick="selectRole('admin')">
+                    <i class="fas fa-user-cog"></i>
+                    Admin
+                </div>
+            </div>
+
+            <div class="login-card">
+                <form id="examLoginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="username">Username</label>
+                        <div class="input-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="username" class="form-input" placeholder="Enter your username"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" class="form-input" placeholder="Enter your password"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="examCodeGroup">
+                        <label class="form-label" for="examCode">Exam Code</label>
+                        <div class="input-icon">
+                            <i class="fas fa-key"></i>
+                            <input type="text" id="examCode" class="form-input"
+                                placeholder="Enter exam code (e.g., CS101)" required>
+                        </div>
+                        <small style="color: #666; font-size: 0.85rem; display: block; margin-top: 8px;">
+                            Required for student access only
+                        </small>
+                    </div>
+
+                    <button type="submit" class="login-btn" id="loginButton">
+                        <span class="spinner" id="btnSpinner"></span>
+                        <span id="btnText">Login</span>
+                    </button>
+
+
+                    <!-- Add Management Links -->
+                    <div
+                        style="text-align: center; margin-top: 20px; font-size: 0.85rem; color: rgba(255,255,255,0.4);">
+                        <div style="margin-bottom: 10px;">
+                            <a href="#" style="color: var(--gold); text-decoration: none;">Forgot Password?</a>
+                        </div>
+                        <div>
+                            Don't have an account? <a href="javascript:void(0)" onclick="openRegisterModal()"
+                                style="color: var(--gold); text-decoration: none; font-weight: 600;">Sign Up</a>
+                        </div>
+                    </div>
+
+                    <div class="error-message" id="errorMessage">
+                        Invalid credentials. Please try again.
+                    </div>
+                </form>
+
+                <div class="demo-credentials">
+                    <h4><i class="fas fa-info-circle"></i> Demo Credentials</h4>
+                    <div id="studentCreds">
+                        <p><strong>Students:</strong> student1 ... student100 / student@Pass1 ... 100</p>
+                    </div>
+                    <div id="instructorCreds" style="display: none;">
+                        <p><strong>Instructor:</strong> instructor1 / Instruter@123</p>
+                    </div>
+                    <div id="adminCreds" style="display: none;">
+                        <p><strong>Admin:</strong> admin1 / Admin@123</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registration Modal (Firestore Driven) -->
+            <div id="registerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; align-items:center; justify-content:center; backdrop-filter: blur(5px);">
+                <div style="background:var(--primary-dark); padding:30px; border-radius:20px; width:90%; max-width:400px; border:1px solid var(--gold); box-shadow: 0 10px 40px rgba(0,0,0,0.5); position:relative;">
+                    <span onclick="closeRegisterModal()" style="position:absolute; top:15px; right:20px; color:#fff; cursor:pointer; font-size:1.5rem;">&times;</span>
+                    <h2 style="color:var(--gold); margin-top:0; font-family:'Playfair Display', serif;">Member Registration</h2>
+                    <p style="color:rgba(255,255,255,0.6); font-size:0.9rem; margin-bottom:20px;">Join the Exam Control System community.</p>
+                    
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="regName" class="form-input" style="background:rgba(255,255,255,0.05); color:white;" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Username / Email</label>
+                            <input type="text" id="regUser" class="form-input" style="background:rgba(255,255,255,0.05); color:white;" placeholder="Choose a username" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" id="regPass" class="form-input" style="background:rgba(255,255,255,0.05); color:white;" placeholder="Create a password" required>
+                        </div>
+                        <button type="submit" class="login-btn" style="width:100%; margin-top:10px;">
+                            <span id="regBtnText">Create Account</span>
+                        </button>
+                    </form>
+                    <div id="regStatus" style="margin-top:15px; display:none; text-align:center; font-size:0.9rem;"></div>
+                </div>
+            </div>
+
+            <!-- Live Cloud Sync Status (Firestore Demo) -->
+            <div id="firestoreLogSection" style="margin-top: 25px; padding: 15px; border-radius: 12px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(212, 175, 55, 0.15); display: none;">
+                <h5 style="color: var(--gold); margin: 0 0 10px 0; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-cloud-upload-alt"></i> Live Cloud Log
+                </h5>
+                <div id="loginLogs" style="font-size: 0.75rem; color: rgba(255,255,255,0.6); max-height: 80px; overflow-y: auto;">
+                    <p style="margin: 5px 0;">Waiting for cloud events...</p>
+                </div>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Homepage</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Login Modal -->
+    <div class="google-modal-overlay" id="googleModalOverlay">
+        <div class="google-modal">
+            <span class="google-close" onclick="closeGoogleModal()">&times;</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png"
+                alt="Google" class="google-logo-img">
+
+            <!-- STEP 0: Account Selection -->
+            <div id="googleAccountStep">
+                <h2 class="google-title">Choose an account</h2>
+                <p class="google-subtitle">to continue to Mocha</p>
+
+                <div class="google-account-list">
+                    <div class="google-account-item"
+                        onclick="selectGoogleAccount('Raj Priyan', 'priyanraj067@gmail.com')">
+                        <div class="google-account-avatar">
+                            <img src="https://ui-avatars.com/api/?name=RP&background=1a73e8&color=fff" alt="Raj Priyan">
+                        </div>
+                        <div class="google-account-info">
+                            <span class="google-account-name">Raj Priyan</span>
+                            <span class="google-account-email">priyanraj067@gmail.com</span>
+                        </div>
+                    </div>
+
+                    <div class="google-account-item" onclick="useAnotherAccount()">
+                        <div class="google-account-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="google-account-info">
+                            <span class="google-account-name">Use another account</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="google-account-footer-links">
+                    Before using this app, you can review Mocha's <a href="#">privacy policy</a> and <a href="#">terms
+                        of service</a>.
+                </div>
+
+                <div class="google-modal-footer-nav">
+                    <div>Help</div>
+                    <div>Privacy</div>
+                    <div>Terms</div>
+                </div>
+            </div>
+
+            <!-- STEP 1: Email -->
+            <div id="googleEmailStep">
+                <h2 class="google-title">Sign in</h2>
+                <p class="google-subtitle">Use your Google Account</p>
+                <div class="google-input-container">
+                    <input type="email" class="google-input" id="googleEmailInput" placeholder="Email or phone"
+                        autofocus>
+                </div>
+                <a href="#" class="google-forgot">Forgot email?</a>
+                <div style="text-align: left; color: #5f6368; font-size: 14px; margin-bottom: 40px;">
+                    Not your computer? Use Guest mode to sign in privately. <a href="#"
+                        style="color: #1a73e8; text-decoration: none;">Learn more</a>
+                </div>
+                <div class="google-footer">
+                    <a href="#" class="google-create-account">Create account</a>
+                    <button class="google-next-btn" onclick="startSecurityScan()">Next</button>
+                </div>
+            </div>
+
+            <!-- STEP 1.5: Security Scan (Online Tools Simulation) -->
+            <div id="googleScanStep" style="display: none;">
+                <h2 class="google-title">Verifying Identity</h2>
+                <p class="google-subtitle" style="font-size: 14px;">Powered by Google Online Verification Tools</p>
+
+                <div class="scanner-container" id="scannerList">
+                    <div class="scan-item" id="scan1">
+                        <i class="fas fa-shield-alt scan-icon" id="icon1"></i>
+                        <span id="text1">Google Safe Browsing Check...</span>
+                    </div>
+                    <div class="scan-item" id="scan2">
+                        <i class="fas fa-server scan-icon" id="icon2"></i>
+                        <span id="text2">Verifying MX Records & SMTP handshake...</span>
+                    </div>
+                    <div class="scan-item" id="scan3">
+                        <i class="fas fa-user-check scan-icon" id="icon3"></i>
+                        <span id="text3">Anti-Fraud & Domain Reputation Scan...</span>
+                    </div>
+                    <div class="scan-item" id="scan4">
+                        <i class="fas fa-envelope-open-text scan-icon" id="icon4"></i>
+                        <span id="text4">Sending Secure Verification Email...</span>
+                    </div>
+                </div>
+
+                <div class="progress-bar-mini">
+                    <div class="progress-fill-mini" id="scanProgress"></div>
+                </div>
+
+                <div style="text-align: center; color: #1a73e8; font-weight: 500; font-size: 13px;" id="scanStatusText">
+                    Establishing secure connection...
+                </div>
+            </div>
+
+            <!-- STEP 2: Password -->
+            <div id="googlePasswordStep" style="display: none;">
+                <h2 class="google-title">Welcome</h2>
+                <div class="google-profile-container">
+                    <div class="google-profile-pic" id="googleInitials">?</div>
+                    <span id="googleDisplayEmail">email@gmail.com</span>
+                    <i class="fas fa-chevron-down" style="font-size: 10px;"></i>
+                </div>
+                <div class="google-input-container">
+                    <input type="password" class="google-input" id="googlePasswordInput"
+                        placeholder="Enter your password">
+                </div>
+                <div style="text-align: left; margin-bottom: 40px;">
+                    <label style="color: #202124; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox"> Show password
+                    </label>
+                </div>
+                <div class="google-footer">
+                    <a href="#" class="google-create-account">Forgot password?</a>
+                    <button class="google-next-btn" onclick="goToGoogleMobile()">Next</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Mobile Verification -->
+            <div id="googleMobileStep" style="display: none;">
+                <h2 class="google-title">Phone Verification</h2>
+                <p class="google-subtitle" style="font-size: 14px; margin-bottom: 20px;">
+                    Google needs to verify it's really you. Enter your mobile number to receive a verification code.
+                </p>
+                <div class="google-input-container">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" class="google-input" style="width: 80px;" value="+91" disabled>
+                        <input type="tel" class="google-input" id="googleMobileInput" placeholder="Mobile number"
+                            maxlength="10">
+                    </div>
+                </div>
+                <div style="text-align: left; color: #5f6368; font-size: 13px; margin-bottom: 40px;">
+                    Standard rates apply. Google will send a one-time code to this number.
+                </div>
+                <div class="google-footer">
+                    <a href="javascript:void(0)" class="google-create-account" onclick="goToGoogleQr()">Pair device
+                        (QR)</a>
+                    <button class="google-next-btn" id="sendOtpBtn" onclick="sendGoogleMobileOtp()">
+                        <span id="otpBtnText">Send OTP</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 4: OTP Verification -->
+            <div id="googleOtpStep" style="display: none;">
+                <h2 class="google-title">2-Step Verification</h2>
+                <p class="google-subtitle" id="otpSubtitle" style="font-size: 14px; margin-bottom: 20px;">
+                    A 4-digit verification code was just sent to your mobile. Enter it below.
+                </p>
+                <div class="otp-input-group">
+                    <input type="text" class="otp-code" id="otp1" maxlength="1" onkeyup="moveOtp(this, 'otp2')">
+                    <input type="text" class="otp-code" id="otp2" maxlength="1" onkeyup="moveOtp(this, 'otp3')">
+                    <input type="text" class="otp-code" id="otp3" maxlength="1" onkeyup="moveOtp(this, 'otp4')">
+                    <input type="text" class="otp-code" id="otp4" maxlength="1" onkeyup="moveOtp(this, 'otp5')">
+                    <input type="text" class="otp-code" id="otp5" maxlength="1" onkeyup="moveOtp(this, 'otp6')">
+                    <input type="text" class="otp-code" id="otp6" maxlength="1">
+                </div>
+                <div style="text-align: left; color: #5f6368; font-size: 14px; margin-bottom: 40px;">
+                    <div id="resendTimer" style="margin-bottom: 10px; font-size: 13px; color: #1a73e8;">
+                        Resend code in <span id="timerSec">30</span>s
+                    </div>
+                    <label style="color: #202124; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" checked> Don't ask again on this device
+                    </label>
+                </div>
+                <div class="google-footer">
+                    <a href="#" class="google-create-account" id="resendLink"
+                        style="pointer-events: none; opacity: 0.5;" onclick="sendGoogleMobileOtp()">Resend code</a>
+                    <button class="google-next-btn" onclick="handleGoogleLoginFinal()">Verify</button>
+                </div>
+                <!-- REAL GMAIL SYNC OPTION -->
+                <button id="fetchGmailBtn" onclick="syncAndFetchGmailOTP()">
+                    <i class="fab fa-google"></i>
+                    <span id="fetchText">Fetch code from my Google Mail</span>
+                    <div class="spinner" id="fetchSpinner"
+                        style="width: 14px; height: 14px; display: none; border-top-color: #EA4335;"></div>
+                </button>
+                <div
+                    style="margin-top: 20px; border-top: 1px solid #f1f3f4; padding-top: 15px; display: flex; justify-content: space-around;">
+                    <a href="javascript:void(0)" onclick="goToGoogleQr()"
+                        style="color: #1a73e8; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-qrcode"></i> Try QR Pairing
+                    </a>
+                    <a href="javascript:void(0)" onclick="toggleGoogleHelp(true)"
+                        style="color: #1a73e8; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-question-circle"></i> Troubleshooting
+                    </a>
+                </div>
+            </div>
+
+            <!-- STEP 6: QR PAIRING STEP -->
+            <div id="googleQrStep" style="display: none;">
+                <h2 class="google-title">Device Pairing</h2>
+                <p class="google-subtitle" style="font-size: 14px; margin-bottom: 20px;">
+                    Open <b>Google Messages</b> or your <b>Camera</b> on your phone and scan the code below.
+                </p>
+                <div
+                    style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #dadce0; width: 200px; margin: 0 auto 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative;">
+                    <i class="fas fa-qrcode" id="qrIcon"
+                        style="font-size: 150px; color: #202124; transition: all 0.3s ease;"></i>
+                    <div id="qrSuccess"
+                        style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="fas fa-check-circle"
+                            style="font-size: 60px; color: #1e8e3e; margin-bottom: 10px;"></i>
+                        <span style="font-weight: 600; color: #202124;">Paired!</span>
+                    </div>
+                </div>
+                <p style="font-size: 13px; color: #5f6368; margin-bottom: 30px;">
+                    This securely links your browser to your phone via encrypted E2E.
+                </p>
+                <div class="google-footer">
+                    <a href="javascript:void(0)" class="google-create-account" onclick="openGoogleModal()">Back</a>
+                    <button class="google-next-btn" onclick="handleQrVerification()">I've scanned it</button>
+                </div>
+            </div>
+
+            <!-- STEP 5: HELP SCREEN -->
+            <div id="googleHelpStep" class="google-help-screen" style="display: none;">
+                <h3><i class="fas fa-shield-check" style="color: #1e8e3e;"></i> 2-Step Verification Guide</h3>
+
+                <div class="help-item">
+                    <span class="help-title"><i class="fas fa-mobile-alt"></i> 1. Enable 2-Step Verification</span>
+                    <span class="help-desc">Go to Google Account > Security. Turn on 2-Step Verification and add a
+                        recovery phone number. Google will send OTPs via SMS to bridge your phone to this
+                        browser.</span>
+                </div>
+
+                <div class="help-item">
+                    <span class="help-title"><i class="fas fa-desktop"></i> 2. Use Google Messages for Web</span>
+                    <span class="help-desc">View OTPs directly on your computer by pairing your phone. Open Messages app
+                        > Device Pairing > Scan QR code at <i>messages.google.com</i>.</span>
+                </div>
+
+                <div class="help-item">
+                    <span class="help-title"><i class="fas fa-puzzle-piece"></i> 3. OTP Push for Chrome</span>
+                    <span class="help-desc">Install the "OTP Push" extension and mobile app. Scan the connection QR to
+                        allow instant code copying from phone to web.</span>
+                </div>
+
+                <div class="help-item">
+                    <span class="help-title"><i class="fas fa-tools"></i> Troubleshooting Delivery</span>
+                    <span class="help-desc">If no SMS arrives: Check internet connection, disable "Do Not Disturb", and
+                        verify the number in settings.</span>
+                </div>
+
+                <div class="help-item">
+                    <span class="help-title"><i class="fas fa-key"></i> Lockout Recovery</span>
+                    <span class="help-desc">Use the "Try another way" option to fall back to backup devices or security
+                        keys if your primary phone is unavailable.</span>
+                </div>
+
+                <div class="google-help-back" onclick="toggleGoogleHelp(false)">
+                    <i class="fas fa-arrow-left"></i> Back to verification
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simulated SMS Toast -->
+    <div class="toast-notification" id="otpToast"
+        style="background: rgba(255, 255, 255, 0.95); color: #333; border-left: 5px solid #1a73e8; backdrop-filter: blur(15px);-webkit-backdrop-filter: blur(15px);">
+        <div class="toast-icon"
+            style="background: #1a73e8; color: white; width: 45px; height: 45px; font-size: 1.2rem;">
+            <i class="fas fa-comment"></i>
+        </div>
+        <div style="flex-grow: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                <span id="toastSender" style="font-weight: 700; font-size: 13px; color: #1a73e8;">Google Security</span>
+                <span style="font-size: 11px; color: #777;">Now</span>
+            </div>
+            <div id="toastContent" style="font-size: 13.5px; line-height: 1.4; color: #444; font-weight: 500;">
+                G-123456 is your verification code.
+            </div>
+        </div>
+    </div>
+
+    <!-- System Authorization & Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+        <div id="authHeader">EXAM CONTROL SYSTEM</div>
+        <div id="authSubheader">Access Authorization</div>
+
+        <div style="position: relative; margin: 20px 0;">
+            <i class="fas fa-shield-alt" style="font-size: 4.5rem; color: var(--gold); opacity: 0.9;"></i>
+            <div class="spinner" id="authSpinner"
+                style="position: absolute; top: -10px; left: -10px; width: 90px; height: 90px; border-width: 2px; border-top-color: var(--gold); display: block;">
+            </div>
+        </div>
+
+        <h2 style="color: #ffffff; margin-top: 15px;" id="authStatusTitle">Validating Identity...</h2>
+        <p style="color: rgba(200,215,255,0.8); margin-bottom: 25px; min-height: 20px;" id="successMessage">Connecting
+            to 2-Step Verification bridge...</p>
+
+        <div id="authProgress"
+            style="width: 100%; height: 2px; background: rgba(255,255,255,0.1); border-radius: 1px; overflow: hidden; margin-top: 20px;">
+            <div id="authProgressFill"
+                style="width: 0%; height: 100%; background: var(--gold); transition: width 0.3s ease;"></div>
+        </div>
+    </div>
+
+    <!-- Mock Backend for Google Login -->
+    <script src="js/gmail.js"></script>
+    <!-- UI Logic and Authentication -->
+    <script src="js/login.js"></script>
+
+    <script>
+        // Use a IIFE to keep the animation logic contained
+        (function() {
+            const canvas = document.getElementById('flowerCanvas');
+            const ctx = canvas.getContext('2d');
+            let W, H, frame = 0;
+
+            function resize() {
+                W = canvas.width = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+            }
+
+            function drawBg() {
+                const grad = ctx.createLinearGradient(0, 0, W, H);
+                grad.addColorStop(0, '#f5e4b0');
+                grad.addColorStop(0.4, '#e8cc80');
+                grad.addColorStop(0.7, '#d4a840');
+                grad.addColorStop(1, '#b8860b');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, W, H);
+                const rg = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, Math.min(W, H) * 0.65);
+                rg.addColorStop(0, 'rgba(255,245,200,0.55)');
+                rg.addColorStop(1, 'rgba(180,120,0,0)');
+                ctx.fillStyle = rg;
+                ctx.fillRect(0, 0, W, H);
+            }
+
+            function drawPetal(ctx, cx, cy, len, width, angle, alpha, color) {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle);
+                ctx.globalAlpha = alpha;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(width * 0.6, -len * 0.3, width * 0.6, -len * 0.7, 0, -len);
+                ctx.bezierCurveTo(-width * 0.6, -len * 0.7, -width * 0.6, -len * 0.3, 0, 0);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+                const shine = ctx.createLinearGradient(0, 0, 0, -len);
+                shine.addColorStop(0, 'rgba(255,255,220,0.0)');
+                shine.addColorStop(0.4, 'rgba(255,255,200,0.18)');
+                shine.addColorStop(1, 'rgba(255,255,210,0.0)');
+                ctx.fillStyle = shine;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function drawFlower(cx, cy, size, baseAngle, phasePetals, alpha) {
+                const petalCount = 8;
+                const outerColor = `rgba(180,120,10,${alpha * 0.85})`;
+                const innerColor = `rgba(220,160,30,${alpha * 0.9})`;
+                const centreColor = `rgba(240,200,60,${alpha})`;
+                for (let i = 0; i < petalCount; i++) {
+                    const ang = baseAngle + (i / petalCount) * Math.PI * 2;
+                    const waver = Math.sin(phasePetals + i * 0.7) * 0.04;
+                    drawPetal(ctx, cx, cy, size, size * 0.45, ang + waver, alpha * (0.7 + 0.25 * Math.sin(phasePetals + i)), outerColor);
+                }
+                for (let i = 0; i < petalCount; i++) {
+                    const ang = baseAngle + (i / petalCount) * Math.PI * 2 + Math.PI / petalCount;
+                    const waver = Math.sin(phasePetals * 1.2 + i * 0.5) * 0.05;
+                    drawPetal(ctx, cx, cy, size * 0.65, size * 0.32, ang + waver, alpha * 0.85, innerColor);
+                }
+                ctx.save();
+                ctx.globalAlpha = alpha;
+                ctx.beginPath();
+                ctx.arc(cx, cy, size * 0.18, 0, Math.PI * 2);
+                const discGrad = ctx.createRadialGradient(cx - size * 0.05, cy - size * 0.05, 0, cx, cy, size * 0.18);
+                discGrad.addColorStop(0, '#fff0a0');
+                discGrad.addColorStop(1, centreColor);
+                ctx.fillStyle = discGrad;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function drawLeaf(cx, cy, len, angle, alpha) {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle);
+                ctx.globalAlpha = alpha * 0.75;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(len * 0.35, -len * 0.25, len * 0.35, -len * 0.75, 0, -len);
+                ctx.bezierCurveTo(-len * 0.35, -len * 0.75, -len * 0.35, -len * 0.25, 0, 0);
+                ctx.closePath();
+                ctx.fillStyle = `rgba(140,95,5,0.6)`;
+                ctx.fill();
+                ctx.strokeStyle = `rgba(100,65,0,0.4)`;
+                ctx.lineWidth = 0.8;
+                ctx.beginPath();
+                ctx.moveTo(0, 0); ctx.lineTo(0, -len);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            const SPARKS = Array.from({ length: 55 }, () => ({
+                x: Math.random(), y: Math.random(),
+                r: 0.8 + Math.random() * 2,
+                speed: 0.0002 + Math.random() * 0.0005,
+                phase: Math.random() * Math.PI * 2,
+                alpha: 0.2 + Math.random() * 0.5,
+            }));
+
+            const FLOWERS = Array.from({ length: 7 }, () => ({
+                x: 0.05 + Math.random() * 0.9,
+                y: 0.5 + Math.random() * 0.7,
+                size: 28 + Math.random() * 45,
+                speed: 0.00018 + Math.random() * 0.00025,
+                drift: (Math.random() - 0.5) * 0.0002,
+                phase: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.008,
+                rot: Math.random() * Math.PI * 2,
+                alpha: 0.55 + Math.random() * 0.35,
+            }));
+
+            const DECO = [
+                { x: 0.82, y: 0.75, size: 90, rot: -0.4, alpha: 0.55 },
+                { x: 0.10, y: 0.20, size: 65, rot: 0.6, alpha: 0.45 },
+                { x: 0.90, y: 0.10, size: 50, rot: 1.2, alpha: 0.35 },
+            ];
+
+            function draw() {
+                frame++;
+                ctx.clearRect(0, 0, W, H);
+                drawBg();
+                DECO.forEach(d => {
+                    const pulse = 0.97 + 0.03 * Math.sin(frame * 0.015 + d.rot);
+                    drawFlower(d.x * W, d.y * H, d.size * pulse, d.rot + frame * 0.003, frame * 0.012, d.alpha);
+                    drawLeaf(d.x * W, d.y * H, d.size * 1.3, d.rot + 0.9 + frame * 0.002, d.alpha);
+                    drawLeaf(d.x * W, d.y * H, d.size * 1.1, d.rot - 0.6 + frame * 0.002, d.alpha);
+                });
+                FLOWERS.forEach(f => {
+                    f.y -= f.speed; f.x += f.drift; f.rot += f.rotSpeed; f.phase += 0.01;
+                    if (f.y < -0.15) { f.y = 1.15; f.x = 0.05 + Math.random() * 0.9; }
+                    const wobble = Math.sin(f.phase) * 0.003;
+                    drawFlower(f.x * W, f.y * H, f.size, f.rot, f.phase, f.alpha);
+                    drawLeaf(f.x * W, f.y * H, f.size * 1.2, f.rot + 0.9 + wobble, f.alpha * 0.8);
+                    drawLeaf(f.x * W, f.y * H, f.size * 1.0, f.rot - 0.7 - wobble, f.alpha * 0.7);
+                });
+                SPARKS.forEach(s => {
+                    s.y -= s.speed; s.x += Math.sin(s.phase + frame * 0.02) * 0.0003;
+                    if (s.y < -0.02) { s.y = 1.02; s.x = Math.random(); }
+                    const tw = (Math.sin(s.phase + frame * 0.04) + 1) / 2;
+                    ctx.save();
+                    ctx.globalAlpha = s.alpha * tw;
+                    ctx.fillStyle = `rgba(255,240,150,1)`;
+                    ctx.shadowBlur = 6; ctx.beginPath();
+                    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2); ctx.fill();
+                    ctx.restore();
+                });
+                requestAnimationFrame(draw);
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            draw();
+        })();
+
+        // Re-implementing minor UI helpers that interact with Modal
+        function openGoogleModal() { document.getElementById('googleModalOverlay').style.display = 'flex'; }
+        function closeGoogleModal() { document.getElementById('googleModalOverlay').style.display = 'none'; }
+    </script>
+</body>
+
+</html>

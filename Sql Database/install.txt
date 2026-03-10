@@ -1,0 +1,110 @@
+EXAM CONTROL SYSTEM - DATABASE INSTALLATION
+============================================
+
+1. Create Database
+------------------
+- Open phpMyAdmin or MySQL command line
+- Run the database.sql file to create all tables and insert default data
+
+Via command line:
+mysql -u root -p < database.sql
+
+Via phpMyAdmin:
+- Import the database.sql file
+
+2. Configure Database Connection
+--------------------------------
+- Open config.php and update database credentials if needed
+- Default: host=localhost, user=root, password="", database=exam_control_system
+
+3. Update Password Hashes
+-------------------------
+- The default passwords in database.sql are placeholders
+- Generate actual password hashes using:
+
+<?php
+echo password_hash('Admin@123', PASSWORD_DEFAULT);
+?>
+
+- Update the password_hash in users table with the generated hash
+
+4. Test Connection
+------------------
+- Navigate to test_db.php in your browser
+- You should see "Database connected successfully!"
+- If not, check your database credentials in config.php
+
+5. Default Users
+----------------
+After installation, these users are available:
+
+Admin:
+  Username: admin
+  Email: admin@examcontrol.com
+  Password: Admin@123 (after updating hash)
+
+Instructors:
+  Username: instructor1, instructor2, instructor3
+  Password: (needs to be set)
+
+Students:
+  Username: student1, student2, student3, student4, student5
+  Password: (needs to be set)
+
+6. File Structure
+-----------------
+- database.sql         - Database schema and initial data
+- db_connector.php     - Main database connector class
+- config.php          - Configuration settings
+- test_db.php         - Test connection file
+
+7. Usage Examples
+----------------
+
+// Get database instance
+$db = DatabaseConnector::getInstance();
+
+// Select user
+$user = $db->selectOne(
+    "SELECT * FROM users WHERE user_id = ?",
+    [1], "i"
+);
+
+// Insert data
+$userId = $db->insert('users', [
+    'username' => 'newuser',
+    'email' => 'user@example.com',
+    'password_hash' => password_hash('password', PASSWORD_DEFAULT),
+    'full_name' => 'New User',
+    'user_type' => 'student'
+]);
+
+// Update data
+$db->update('users',
+    ['last_login' => date('Y-m-d H:i:s')],
+    'user_id = ?',
+    [$userId], 'i'
+);
+
+// Student operations
+$student = new Student();
+$profile = $student->getProfile(1);
+$courses = $student->getEnrolledCourses(1);
+
+// Instructor operations
+$instructor = new Instructor();
+$myCourses = $instructor->getCourses(1);
+
+// Admin operations
+$admin = new Admin();
+$stats = $admin->getSystemStats();
+$users = $admin->getAllUsers(['user_type' => 'student']);
+
+8. Troubleshooting
+------------------
+- If connection fails, check MySQL is running
+- Verify database credentials in config.php
+- Ensure database.sql was imported successfully
+- Check PHP MySQL extension is enabled (mysqli)
+
+For support, contact: admin@examcontrol.com

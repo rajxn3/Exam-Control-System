@@ -10,45 +10,6 @@
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet">
 
-    <!-- Firebase SDK Configuration -->
-    <script type="importmap">
-    {
-      "imports": {
-        "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
-        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js",
-        "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"
-      }
-    }
-    </script>
-    <script type="module">
-        import { initializeApp } from "firebase/app";
-        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, limit, onSnapshot } from "firebase/firestore";
-        import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyCWP3hxl6VwnwMt9eO3N5OdXR97dJcW3h4",
-          authDomain: "exam-control-system.firebaseapp.com",
-          projectId: "exam-control-system",
-          storageBucket: "exam-control-system.firebasestorage.app",
-          messagingSenderId: "130227673327",
-          appId: "1:130227673327:web:8ebc5f9d82071317ff631a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // Expose to window for login.js
-        window.firebaseApp = app;
-        window.db = db;
-        window.auth = auth;
-        window.firebaseFirestore = { collection, addDoc, getDocs, query, where, orderBy, limit, onSnapshot };
-        window.firebaseAuth = { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup };
-
-        console.log("🔥 Firebase & Firestore initialized and exposed");
-    </script>
-
-
     <style>
         :root {
             --primary-dark: #09121d;
@@ -1064,58 +1025,6 @@
                 margin-bottom: 25px;
             }
         }
-        /* CORNER LOGO DISPLAY - CIRCULAR ICON ONLY */
-        .corner-logo {
-            position: fixed;
-            top: 25px;
-            right: 35px;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.95);
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .corner-logo:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-            background: #ffffff;
-            border-color: #d4af37;
-        }
-
-        .corner-logo img {
-            height: 65px;
-            width: 65px;
-            object-fit: contain;
-        }
-
-        @media (max-width: 1100px) {
-            .corner-logo {
-                top: 15px;
-                right: 15px;
-                width: 65px;
-                height: 65px;
-            }
-            .corner-logo img {
-                height: 50px;
-                width: 50px;
-            }
-        }
-
-        @media (max-width: 850px) {
-             .corner-logo {
-                position: absolute;
-                background: white;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-             }
-        }
     </style>
 </head>
 
@@ -1124,11 +1033,6 @@
     <!-- Broken Glass Canvas Background -->
     <!-- Animated Flower Canvas Background -->
     <canvas id="flowerCanvas"></canvas>
-
-    <!-- Institutional Corner Logo -->
-    <a href="index.html" class="corner-logo">
-        <img src="logo.png" alt="Logo">
-    </a>
 
     <div class="login-container">
         <!-- Left Panel -->
@@ -1247,6 +1151,15 @@
                         <span id="btnText">Login</span>
                     </button>
 
+                    <div style="display: flex; align-items: center; margin: 15px 0; color: rgba(255,255,255,0.2);">
+                        <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
+                        <span style="padding: 0 10px; font-size: 0.75rem;">OR</span>
+                        <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
+                    </div>
+
+                    <button type="button" class="google-login-btn" onclick="openGoogleModal()">
+                        <i class="fab fa-google"></i> Continue with Gmail
+                    </button>
 
                     <!-- Add Management Links -->
                     <div
@@ -1255,7 +1168,7 @@
                             <a href="#" style="color: var(--gold); text-decoration: none;">Forgot Password?</a>
                         </div>
                         <div>
-                            Don't have an account? <a href="javascript:void(0)" onclick="openRegisterModal()"
+                            Don't have an account? <a href="#"
                                 style="color: var(--gold); text-decoration: none; font-weight: 600;">Sign Up</a>
                         </div>
                     </div>
@@ -1268,52 +1181,14 @@
                 <div class="demo-credentials">
                     <h4><i class="fas fa-info-circle"></i> Demo Credentials</h4>
                     <div id="studentCreds">
-                        <p><strong>Students:</strong> student1 ... student100 / student@Pass1 ... 100</p>
+                        <p><strong>Students:</strong> student1, student2, arjun_sharma / 12345678</p>
                     </div>
                     <div id="instructorCreds" style="display: none;">
-                        <p><strong>Instructor:</strong> instructor1 / Instruter@123</p>
+                        <p><strong>Instructor:</strong> instructor_demo / pass456</p>
                     </div>
                     <div id="adminCreds" style="display: none;">
-                        <p><strong>Admin:</strong> admin1 / Admin@123</p>
+                        <p><strong>Admin:</strong> admin_root / root123</p>
                     </div>
-                </div>
-            </div>
-
-            <!-- Registration Modal (Firestore Driven) -->
-            <div id="registerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; align-items:center; justify-content:center; backdrop-filter: blur(5px);">
-                <div style="background:var(--primary-dark); padding:30px; border-radius:20px; width:90%; max-width:400px; border:1px solid var(--gold); box-shadow: 0 10px 40px rgba(0,0,0,0.5); position:relative;">
-                    <span onclick="closeRegisterModal()" style="position:absolute; top:15px; right:20px; color:#fff; cursor:pointer; font-size:1.5rem;">&times;</span>
-                    <h2 style="color:var(--gold); margin-top:0; font-family:'Playfair Display', serif;">Member Registration</h2>
-                    <p style="color:rgba(255,255,255,0.6); font-size:0.9rem; margin-bottom:20px;">Join the Exam Control System community.</p>
-                    
-                    <form id="registerForm">
-                        <div class="form-group">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" id="regName" class="form-input" style="background:rgba(255,255,255,0.05); color:white;" placeholder="Enter your full name" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Username / Email</label>
-                            <input type="text" id="regUser" class="form-input" style="background:rgba(255,255,255,0.05); color:white;" placeholder="Choose a username" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Password</label>
-                            <input type="password" id="regPass" class="form-input" style="background:rgba(255,255,255,0.05); color:white;" placeholder="Create a password" required>
-                        </div>
-                        <button type="submit" class="login-btn" style="width:100%; margin-top:10px;">
-                            <span id="regBtnText">Create Account</span>
-                        </button>
-                    </form>
-                    <div id="regStatus" style="margin-top:15px; display:none; text-align:center; font-size:0.9rem;"></div>
-                </div>
-            </div>
-
-            <!-- Live Cloud Sync Status (Firestore Demo) -->
-            <div id="firestoreLogSection" style="margin-top: 25px; padding: 15px; border-radius: 12px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(212, 175, 55, 0.15); display: none;">
-                <h5 style="color: var(--gold); margin: 0 0 10px 0; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">
-                    <i class="fas fa-cloud-upload-alt"></i> Live Cloud Log
-                </h5>
-                <div id="loginLogs" style="font-size: 0.75rem; color: rgba(255,255,255,0.6); max-height: 80px; overflow-y: auto;">
-                    <p style="margin: 5px 0;">Waiting for cloud events...</p>
                 </div>
             </div>
 
@@ -1627,12 +1502,9 @@
 
     <!-- Mock Backend for Google Login -->
     <script src="js/gmail.js"></script>
-    <!-- UI Logic and Authentication -->
-    <script src="js/login.js"></script>
-
     <script>
-        // Use a IIFE to keep the animation logic contained
-        (function() {
+        // Pre-fill demo credentials based on role selection
+        (function () {
             const canvas = document.getElementById('flowerCanvas');
             const ctx = canvas.getContext('2d');
             let W, H, frame = 0;
@@ -1642,6 +1514,7 @@
                 H = canvas.height = window.innerHeight;
             }
 
+            // ---------- Background gradient (warm golden/cream) ----------
             function drawBg() {
                 const grad = ctx.createLinearGradient(0, 0, W, H);
                 grad.addColorStop(0, '#f5e4b0');
@@ -1650,6 +1523,8 @@
                 grad.addColorStop(1, '#b8860b');
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, W, H);
+
+                // Soft radial glow at center
                 const rg = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, Math.min(W, H) * 0.65);
                 rg.addColorStop(0, 'rgba(255,245,200,0.55)');
                 rg.addColorStop(1, 'rgba(180,120,0,0)');
@@ -1657,6 +1532,7 @@
                 ctx.fillRect(0, 0, W, H);
             }
 
+            // ---------- Draw one lotus petal ----------
             function drawPetal(ctx, cx, cy, len, width, angle, alpha, color) {
                 ctx.save();
                 ctx.translate(cx, cy);
@@ -1664,11 +1540,20 @@
                 ctx.globalAlpha = alpha;
                 ctx.beginPath();
                 ctx.moveTo(0, 0);
-                ctx.bezierCurveTo(width * 0.6, -len * 0.3, width * 0.6, -len * 0.7, 0, -len);
-                ctx.bezierCurveTo(-width * 0.6, -len * 0.7, -width * 0.6, -len * 0.3, 0, 0);
+                ctx.bezierCurveTo(
+                    width * 0.6, -len * 0.3,
+                    width * 0.6, -len * 0.7,
+                    0, -len
+                );
+                ctx.bezierCurveTo(
+                    -width * 0.6, -len * 0.7,
+                    -width * 0.6, -len * 0.3,
+                    0, 0
+                );
                 ctx.closePath();
                 ctx.fillStyle = color;
                 ctx.fill();
+                // Petal shine
                 const shine = ctx.createLinearGradient(0, 0, 0, -len);
                 shine.addColorStop(0, 'rgba(255,255,220,0.0)');
                 shine.addColorStop(0.4, 'rgba(255,255,200,0.18)');
@@ -1678,21 +1563,27 @@
                 ctx.restore();
             }
 
+            // ---------- Draw one lotus flower ----------
             function drawFlower(cx, cy, size, baseAngle, phasePetals, alpha) {
                 const petalCount = 8;
                 const outerColor = `rgba(180,120,10,${alpha * 0.85})`;
                 const innerColor = `rgba(220,160,30,${alpha * 0.9})`;
                 const centreColor = `rgba(240,200,60,${alpha})`;
+
                 for (let i = 0; i < petalCount; i++) {
                     const ang = baseAngle + (i / petalCount) * Math.PI * 2;
                     const waver = Math.sin(phasePetals + i * 0.7) * 0.04;
-                    drawPetal(ctx, cx, cy, size, size * 0.45, ang + waver, alpha * (0.7 + 0.25 * Math.sin(phasePetals + i)), outerColor);
+                    drawPetal(ctx, cx, cy, size, size * 0.45, ang + waver,
+                        alpha * (0.7 + 0.25 * Math.sin(phasePetals + i)), outerColor);
                 }
+                // Inner ring
                 for (let i = 0; i < petalCount; i++) {
                     const ang = baseAngle + (i / petalCount) * Math.PI * 2 + Math.PI / petalCount;
                     const waver = Math.sin(phasePetals * 1.2 + i * 0.5) * 0.05;
-                    drawPetal(ctx, cx, cy, size * 0.65, size * 0.32, ang + waver, alpha * 0.85, innerColor);
+                    drawPetal(ctx, cx, cy, size * 0.65, size * 0.32, ang + waver,
+                        alpha * 0.85, innerColor);
                 }
+                // Centre disc
                 ctx.save();
                 ctx.globalAlpha = alpha;
                 ctx.beginPath();
@@ -1705,6 +1596,7 @@
                 ctx.restore();
             }
 
+            // ---------- Draw a leaf ----------
             function drawLeaf(cx, cy, len, angle, alpha) {
                 ctx.save();
                 ctx.translate(cx, cy);
@@ -1717,25 +1609,30 @@
                 ctx.closePath();
                 ctx.fillStyle = `rgba(140,95,5,0.6)`;
                 ctx.fill();
+                // Midrib
                 ctx.strokeStyle = `rgba(100,65,0,0.4)`;
                 ctx.lineWidth = 0.8;
                 ctx.beginPath();
-                ctx.moveTo(0, 0); ctx.lineTo(0, -len);
+                ctx.moveTo(0, 0);
+                ctx.lineTo(0, -len);
                 ctx.stroke();
                 ctx.restore();
             }
 
+            // ---------- Floating sparkles ----------
             const SPARKS = Array.from({ length: 55 }, () => ({
                 x: Math.random(), y: Math.random(),
                 r: 0.8 + Math.random() * 2,
                 speed: 0.0002 + Math.random() * 0.0005,
+                angle: -Math.PI / 2 + (Math.random() - 0.5) * 0.8,
                 phase: Math.random() * Math.PI * 2,
                 alpha: 0.2 + Math.random() * 0.5,
             }));
 
-            const FLOWERS = Array.from({ length: 7 }, () => ({
+            // ---------- Floating flowers ----------
+            const FLOWERS = Array.from({ length: 7 }, (_, i) => ({
                 x: 0.05 + Math.random() * 0.9,
-                y: 0.5 + Math.random() * 0.7,
+                y: 0.5 + Math.random() * 0.7,       // start below view
                 size: 28 + Math.random() * 45,
                 speed: 0.00018 + Math.random() * 0.00025,
                 drift: (Math.random() - 0.5) * 0.0002,
@@ -1745,51 +1642,694 @@
                 alpha: 0.55 + Math.random() * 0.35,
             }));
 
+            // ---------- Corner decorative flowers (static large) ----------
             const DECO = [
                 { x: 0.82, y: 0.75, size: 90, rot: -0.4, alpha: 0.55 },
                 { x: 0.10, y: 0.20, size: 65, rot: 0.6, alpha: 0.45 },
                 { x: 0.90, y: 0.10, size: 50, rot: 1.2, alpha: 0.35 },
             ];
 
+            // ---------- Main draw loop ----------
             function draw() {
                 frame++;
                 ctx.clearRect(0, 0, W, H);
+
                 drawBg();
+
+                // Corner / decorative static flowers
                 DECO.forEach(d => {
                     const pulse = 0.97 + 0.03 * Math.sin(frame * 0.015 + d.rot);
                     drawFlower(d.x * W, d.y * H, d.size * pulse, d.rot + frame * 0.003, frame * 0.012, d.alpha);
+                    // Leaves
                     drawLeaf(d.x * W, d.y * H, d.size * 1.3, d.rot + 0.9 + frame * 0.002, d.alpha);
                     drawLeaf(d.x * W, d.y * H, d.size * 1.1, d.rot - 0.6 + frame * 0.002, d.alpha);
                 });
+
+                // Floating moving flowers
                 FLOWERS.forEach(f => {
-                    f.y -= f.speed; f.x += f.drift; f.rot += f.rotSpeed; f.phase += 0.01;
+                    f.y -= f.speed;
+                    f.x += f.drift;
+                    f.rot += f.rotSpeed;
+                    f.phase += 0.01;
                     if (f.y < -0.15) { f.y = 1.15; f.x = 0.05 + Math.random() * 0.9; }
+                    if (f.x < -0.1 || f.x > 1.1) f.drift *= -1;
+
                     const wobble = Math.sin(f.phase) * 0.003;
                     drawFlower(f.x * W, f.y * H, f.size, f.rot, f.phase, f.alpha);
                     drawLeaf(f.x * W, f.y * H, f.size * 1.2, f.rot + 0.9 + wobble, f.alpha * 0.8);
                     drawLeaf(f.x * W, f.y * H, f.size * 1.0, f.rot - 0.7 - wobble, f.alpha * 0.7);
                 });
+
+                // Sparkles
                 SPARKS.forEach(s => {
-                    s.y -= s.speed; s.x += Math.sin(s.phase + frame * 0.02) * 0.0003;
+                    s.y -= s.speed;
+                    s.x += Math.sin(s.phase + frame * 0.02) * 0.0003;
                     if (s.y < -0.02) { s.y = 1.02; s.x = Math.random(); }
                     const tw = (Math.sin(s.phase + frame * 0.04) + 1) / 2;
                     ctx.save();
                     ctx.globalAlpha = s.alpha * tw;
                     ctx.fillStyle = `rgba(255,240,150,1)`;
-                    ctx.shadowBlur = 6; ctx.beginPath();
-                    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2); ctx.fill();
+                    ctx.shadowColor = 'rgba(255,220,80,0.9)';
+                    ctx.shadowBlur = 6;
+                    ctx.beginPath();
+                    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+                    ctx.fill();
                     ctx.restore();
                 });
+
                 requestAnimationFrame(draw);
             }
+
             window.addEventListener('resize', resize);
             resize();
             draw();
         })();
 
-        // Re-implementing minor UI helpers that interact with Modal
-        function openGoogleModal() { document.getElementById('googleModalOverlay').style.display = 'flex'; }
-        function closeGoogleModal() { document.getElementById('googleModalOverlay').style.display = 'none'; }
+        // Credentials for each role - UPDATED TO MATCH DASHBOARD ROLES
+        const CREDENTIALS = {
+            student: {
+                usernames: ['student1', 'student2', 'student3', 'arjun_sharma', 'raj_kumar', 'priya_m'],
+                password: '12345678'
+            },
+            instructor: {
+                username: 'instructor_demo',
+                password: 'pass456'
+            },
+            admin: {
+                username: 'admin_root',
+                password: 'root123'
+            }
+        };
+
+        // Get exam subject from code
+        function getExamSubject(code) {
+            const subjectMap = {
+                'CS101': 'Computer Science 101',
+                'MATH202': 'Mathematics 202',
+                'PHYS101': 'Physics 101',
+                'ENG301': 'Engineering 301',
+                'BIO102': 'Biology 102',
+                'CHEM201': 'Chemistry 201',
+                'HIST101': 'History 101',
+                'ENG101': 'English 101'
+            };
+            return subjectMap[code] || `${code} Examination`;
+        }
+
+        // Role Selection Logic
+        const roleBtns = document.querySelectorAll('.role-btn');
+        const examCodeGroup = document.getElementById('examCodeGroup');
+        const examCodeInput = document.getElementById('examCode');
+
+        // Credential display elements
+        const studentCreds = document.getElementById('studentCreds');
+        const instructorCreds = document.getElementById('instructorCreds');
+        const adminCreds = document.getElementById('adminCreds');
+
+        let currentRole = 'student';
+
+        // Role selection function
+        function selectRole(role) {
+            roleBtns.forEach(b => b.classList.remove('active'));
+            document.querySelector(`.role-btn[data-role="${role}"]`).classList.add('active');
+            currentRole = role;
+
+            // Update form based on role
+            if (role === 'student') {
+                examCodeGroup.style.display = 'block';
+                examCodeInput.required = true;
+                examCodeInput.placeholder = 'Enter exam code (e.g., CS101)';
+            } else {
+                examCodeGroup.style.display = 'none';
+                examCodeInput.required = false;
+            }
+
+            // Update demo credentials display
+            studentCreds.style.display = role === 'student' ? 'block' : 'none';
+            instructorCreds.style.display = role === 'instructor' ? 'block' : 'none';
+            adminCreds.style.display = role === 'admin' ? 'block' : 'none';
+        }
+
+        // Add click event listeners to role buttons
+        roleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                selectRole(btn.getAttribute('data-role'));
+            });
+        });
+
+        // Form Submission
+        document.getElementById('examLoginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const examCode = currentRole === 'student' ? document.getElementById('examCode').value.trim().toUpperCase() : '';
+            const loginBtn = document.getElementById('loginButton');
+            const spinner = document.getElementById('btnSpinner');
+            const btnText = document.getElementById('btnText');
+            const errorMessage = document.getElementById('errorMessage');
+            const successOverlay = document.getElementById('successOverlay');
+            const successMessage = document.getElementById('successMessage');
+
+            // Validate inputs
+            if (!username || !password) {
+                errorMessage.textContent = 'Please fill in all required fields';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (currentRole === 'student' && !examCode) {
+                errorMessage.textContent = 'Exam code is required for student access';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Show loading state
+            loginBtn.disabled = true;
+            spinner.style.display = 'inline-block';
+            btnText.textContent = 'Authenticating...';
+            errorMessage.style.display = 'none';
+
+            // Simulate API call delay
+            setTimeout(() => {
+                const roleCreds = CREDENTIALS[currentRole];
+                let isValid = false;
+
+                if (currentRole === 'student') {
+                    isValid = roleCreds.usernames.includes(username.toLowerCase()) && password === roleCreds.password;
+                } else {
+                    isValid = username === roleCreds.username && password === roleCreds.password;
+                }
+
+                // Check credentials
+                if (isValid) {
+                    // Successful login
+
+                    // Set success message based on role
+                    let redirectMessage = '';
+                    if (currentRole === 'student') {
+                        const examSubject = getExamSubject(examCode);
+                        redirectMessage = `Access granted for ${examSubject}. Redirecting to exam...`;
+
+                        // Store exam data in localStorage
+                        localStorage.setItem('isLoggedIn', 'true');
+                        localStorage.setItem('examLoggedIn', 'true');
+                        localStorage.setItem('examUsername', username);
+                        localStorage.setItem('examCode', examCode);
+                        localStorage.setItem('examSubject', examSubject);
+                        localStorage.setItem('examStartTime', new Date().toISOString());
+                    } else if (currentRole === 'instructor') {
+                        localStorage.setItem('isLoggedIn', 'true');
+                        redirectMessage = 'Instructor dashboard access granted. Redirecting...';
+                    } else {
+                        localStorage.setItem('isLoggedIn', 'true');
+                        redirectMessage = 'Admin panel access granted. Redirecting...';
+                    }
+
+                    successMessage.textContent = redirectMessage;
+
+                    // Store role info - CRITICAL FOR DASHBOARD
+                    localStorage.setItem('userRole', currentRole);
+                    localStorage.setItem('username', username);
+
+                    // Store full name based on role for dashboard display
+                    if (currentRole === 'admin') {
+                        localStorage.setItem('displayName', 'Raj Priyan.K');
+                        localStorage.setItem('userRoleDisplay', 'Administrator');
+                    } else if (currentRole === 'instructor') {
+                        localStorage.setItem('displayName', 'Dr. Priya Sharma');
+                        localStorage.setItem('userRoleDisplay', 'Instructor');
+                    } else {
+                        localStorage.setItem('displayName', 'Arjun Sharma');
+                        localStorage.setItem('userRoleDisplay', 'Student');
+                    }
+
+                    // Show success overlay
+                    successOverlay.classList.add('active');
+
+                    // Redirect based on role
+                    setTimeout(() => {
+                        if (currentRole === 'student') {
+                            window.location.href = 'exam.html';
+                        } else {
+                            window.location.href = 'dashboard.html';
+                        }
+                    }, 2000);
+
+                } else {
+                    // Failed login
+                    errorMessage.textContent = `Invalid ${currentRole} credentials. Please use the demo credentials shown below.`;
+                    errorMessage.style.display = 'block';
+
+                    // Reset button state
+                    loginBtn.disabled = false;
+                    spinner.style.display = 'none';
+                    btnText.textContent = 'Login';
+                }
+            }, 1500);
+        });
+
+        // Initialize
+        // (broken glass handled by canvas engine above)
+
+        // Pre-fill demo credentials based on role selection
+        function fillDemoCredentials(role) {
+            if (role === 'student') {
+                document.getElementById('username').value = 'student1';
+                document.getElementById('password').value = '12345678';
+                document.getElementById('examCode').value = 'CS101';
+            } else if (role === 'instructor') {
+                document.getElementById('username').value = 'instructor_demo';
+                document.getElementById('password').value = 'pass456';
+            } else if (role === 'admin') {
+                document.getElementById('username').value = 'admin_root';
+                document.getElementById('password').value = 'root123';
+            }
+        }
+
+        // Auto-fill credentials when clicking on demo credentials
+        document.querySelectorAll('.demo-credentials p').forEach((item, index) => {
+            item.addEventListener('click', function () {
+                if (currentRole === 'student' && this.textContent.includes('Student')) {
+                    fillDemoCredentials('student');
+                } else if (currentRole === 'instructor' && this.textContent.includes('Instructor')) {
+                    fillDemoCredentials('instructor');
+                } else if (currentRole === 'admin' && this.textContent.includes('Admin')) {
+                    fillDemoCredentials('admin');
+                }
+            });
+        });
+
+        // Add CSS for clickable demo credentials
+        const style = document.createElement('style');
+        style.textContent = `
+            .demo-credentials p {
+                cursor: pointer;
+                transition: all 0.2s ease;
+                padding: 5px 10px;
+                border-radius: 5px;
+            }
+            .demo-credentials p:hover {
+                background: var(--gold-light);
+                color: var(--primary-dark);
+            }
+        `;
+        document.head.appendChild(style);
+
+        // --- MOCK API SERVICE (Based on provided snippets) ---
+        const account = {
+            createPhoneToken: async (id, phoneNumber) => {
+                console.log(`Calling API: createPhoneToken for ID: ${id}, Phone: ${phoneNumber}`);
+                // Simulate network delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                return { userId: id, status: 'sent' };
+            },
+            createSession: async (userId, verificationCode) => {
+                console.log(`Calling API: createSession for User: ${userId}, Code: ${verificationCode}`);
+                // Simulate network delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                return { sessionId: 'sess_' + Math.random().toString(36).substr(2, 9) };
+            }
+        };
+
+        // GOOGLE MODAL HANDLERS
+        let googleEmail = '';
+
+        function openGoogleModal() {
+            document.getElementById('googleModalOverlay').style.display = 'flex';
+            document.getElementById('googleAccountStep').style.display = 'block';
+            document.getElementById('googleEmailStep').style.display = 'none';
+            document.getElementById('googleScanStep').style.display = 'none';
+            document.getElementById('googlePasswordStep').style.display = 'none';
+            document.getElementById('googleMobileStep').style.display = 'none';
+            document.getElementById('googleOtpStep').style.display = 'none';
+            document.getElementById('googleQrStep').style.display = 'none';
+            document.getElementById('googleHelpStep').style.display = 'none';
+        }
+
+        function closeGoogleModal() {
+            document.getElementById('googleModalOverlay').style.display = 'none';
+            // Reset all steps for next time
+            const steps = ['googleAccountStep', 'googleEmailStep', 'googleScanStep', 'googlePasswordStep', 'googleMobileStep', 'googleOtpStep', 'googleQrStep', 'googleHelpStep'];
+            steps.forEach(step => {
+                const el = document.getElementById(step);
+                if (el) el.style.display = 'none';
+            });
+        }
+
+        function selectGoogleAccount(name, email) {
+            googleEmail = email;
+            document.getElementById('googleAccountStep').style.display = 'none';
+            // Pre-fill the email input for the password step later
+            document.getElementById('googleEmailInput').value = email;
+            // Go directly to scan step
+            startSecurityScan(email);
+        }
+
+        function useAnotherAccount() {
+            document.getElementById('googleAccountStep').style.display = 'none';
+            document.getElementById('googleEmailStep').style.display = 'block';
+            document.getElementById('googleEmailInput').focus();
+        }
+
+        function toggleGoogleHelp(show) {
+            const currentStep = document.getElementById('googleOtpStep');
+            const qrStep = document.getElementById('googleQrStep');
+            const helpStep = document.getElementById('googleHelpStep');
+            const logo = document.querySelector('.google-logo-img');
+
+            if (show) {
+                currentStep.style.display = 'none';
+                qrStep.style.display = 'none';
+                helpStep.style.display = 'block';
+                logo.style.display = 'none';
+            } else {
+                // Return to OTP step by default when closing help
+                document.getElementById('googleOtpStep').style.display = 'block';
+                helpStep.style.display = 'none';
+                logo.style.display = 'block';
+            }
+        }
+
+        function goToGoogleQr() {
+            // Hide all other steps
+            document.getElementById('googleMobileStep').style.display = 'none';
+            document.getElementById('googleOtpStep').style.display = 'none';
+            document.getElementById('googleHelpStep').style.display = 'none';
+
+            // Show QR step
+            document.getElementById('googleQrStep').style.display = 'block';
+            document.getElementById('qrSuccess').style.display = 'none';
+        }
+
+        async function handleQrVerification() {
+            const successOverlay = document.getElementById('qrSuccess');
+            const googleLogo = document.querySelector('.google-logo-img');
+
+            // Show success tick on QR
+            successOverlay.style.display = 'flex';
+
+            setTimeout(() => {
+                handleGoogleLoginFinal(true); // Call final login with QR flag
+            }, 1000);
+        }
+
+        async function startSecurityScan(passedEmail) {
+            googleEmail = passedEmail || document.getElementById('googleEmailInput').value;
+            if (!googleEmail || !googleEmail.includes('@')) {
+                alert("Please enter a valid Google email.");
+                return;
+            }
+
+            document.getElementById('googleAccountStep').style.display = 'none';
+            document.getElementById('googleEmailStep').style.display = 'none';
+            document.getElementById('googleScanStep').style.display = 'block';
+
+            const items = [
+                { id: 1, text: "Google Safe Browsing Check Passed" },
+                { id: 2, text: "MX Records & SMTP Verified (gmail.com)" },
+                { id: 3, text: "Identity Authenticated via Online Tools" },
+                { id: 4, text: "Verification Email Sent via Secure SMTP" }
+            ];
+
+            const progress = document.getElementById('scanProgress');
+            const statusText = document.getElementById('scanStatusText');
+
+            for (let i = 0; i < items.length; i++) {
+                const step = items[i];
+                const element = document.getElementById(`scan${step.id}`);
+                const icon = document.getElementById(`icon${step.id}`);
+                const text = document.getElementById(`text${step.id}`);
+
+                element.classList.add('active');
+                icon.classList.add('scanning', 'fa-spin');
+                statusText.textContent = `Processing: ${text.textContent}`;
+
+                await new Promise(r => setTimeout(r, 1200));
+
+                icon.classList.remove('scanning', 'fa-spin');
+                icon.classList.add('done');
+                icon.className = 'fas fa-check-circle scan-icon done';
+                text.textContent = step.text;
+                progress.style.width = `${(i + 1) * 25}%`;
+            }
+
+            statusText.textContent = "Security clearance granted.";
+
+            setTimeout(() => {
+                goToGooglePassword();
+            }, 1000);
+        }
+
+        function goToGooglePassword() {
+            document.getElementById('googleScanStep').style.display = 'none';
+            document.getElementById('googlePasswordStep').style.display = 'block';
+            document.getElementById('googleDisplayEmail').textContent = googleEmail;
+            document.getElementById('googleInitials').textContent = googleEmail.charAt(0).toUpperCase();
+            document.getElementById('googlePasswordInput').focus();
+        }
+
+        async function handleGooglePassword() {
+            const password = document.getElementById('googlePasswordInput').value;
+            if (!password) {
+                alert("Please enter your password.");
+                return;
+            }
+
+            const btn = document.querySelector('#googlePasswordStep .google-next-btn');
+            const originalText = btn.innerHTML;
+
+            btn.innerHTML = '<div class="spinner" id="passSpinner" style="display: inline-block; width: 15px; height: 15px; border-top-color: #fff;"></div> Authenticating...';
+            btn.disabled = true;
+
+            try {
+                // REAL CODING INTEGRATION: Calling verifyPassword on the mock backend
+                const result = await GoogleAuthBackend.verifyPassword(googleEmail, password);
+
+                if (result.status === 'success') {
+                    // Success: Transition to the 2-Step Verification (Mobile Step)
+                    document.getElementById('googlePasswordStep').style.display = 'none';
+                    document.getElementById('googleMobileStep').style.display = 'block';
+                    document.getElementById('googleMobileInput').focus();
+                } else {
+                    // Failure: Reset button and show alert
+                    alert(result.message);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                console.error("Password verification error:", error);
+                alert("Security handshake failed. Please check your connection.");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+        async function syncAndFetchGmailOTP() {
+            const btn = document.getElementById('fetchGmailBtn');
+            const spinner = document.getElementById('fetchSpinner');
+            const text = document.getElementById('fetchText');
+            const statusText = document.getElementById('gmailStatusText');
+            const statusDot = document.getElementById('gmailStatusDot');
+
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            text.textContent = 'Connecting to Google Mail...';
+
+            try {
+                // REAL CODING SIMULATION: Calling the sync method from backend
+                const sync = await GoogleAuthBackend.syncWithGmail(googleEmail);
+
+                if (sync.status === 'success') {
+                    // Update global UI status
+                    statusDot.classList.add('gmail');
+                    statusText.textContent = 'CONNECTED';
+
+                    text.textContent = 'Searching Inbox...';
+
+                    // REAL CODING SIMULATION: Calling the fetch method from backend
+                    const result = await GoogleAuthBackend.fetchFromRealGmail(googleEmail);
+
+                    if (result.status === 'success') {
+                        // Success! Fill the OTP boxes automatically
+                        const otp = result.otp;
+                        for (let i = 0; i < 6; i++) {
+                            document.getElementById(`otp${i + 1}`).value = otp[i];
+                        }
+
+                        text.textContent = 'Verification code synced from Gmail!';
+                        setTimeout(() => {
+                            btn.style.borderColor = '#1e8e3e';
+                            btn.style.color = '#1e8e3e';
+                            text.innerHTML = '<i class="fas fa-check-circle"></i> Code Synced';
+                            spinner.style.display = 'none';
+                        }, 500);
+                    }
+                }
+            } catch (error) {
+                console.error("Gmail sync error:", error);
+                text.textContent = 'Failed to fetch. Try manual entry.';
+                btn.disabled = false;
+                spinner.style.display = 'none';
+            }
+        }
+
+        async function sendGoogleMobileOtp() {
+            const mobile = document.getElementById('googleMobileInput').value;
+            if (!mobile || mobile.length < 10) {
+                alert("Please enter a valid 10-digit mobile number.");
+                return;
+            }
+
+            const sendBtn = document.getElementById('sendOtpBtn');
+            const btnText = document.getElementById('otpBtnText');
+
+            // Start loading state
+            sendBtn.disabled = true;
+            btnText.textContent = "Sending...";
+
+            try {
+                // REAL CODING INTEGRATION: Using GoogleAuthBackend from js/gmail.js
+                const response = await GoogleAuthBackend.sendOTP(googleEmail, "+91" + mobile);
+
+                if (response.status === 'success') {
+                    document.getElementById('googleMobileStep').style.display = 'none';
+                    document.getElementById('googleOtpStep').style.display = 'block';
+                    document.getElementById('otpSubtitle').textContent = `A 6-digit verification code was just sent to ${mobile.substring(0, 2)}******${mobile.substring(8)}. Enter it below.`;
+
+                    // Reset button for possible resend
+                    sendBtn.disabled = false;
+                    btnText.textContent = "Send OTP";
+
+                    // Show Toast Notification with the REAL generated OTP
+                    const toast = document.getElementById('otpToast');
+                    const toastContent = document.getElementById('toastContent');
+                    const toastSender = document.getElementById('toastSender');
+
+                    toastSender.textContent = "Google Security";
+                    toastContent.innerHTML = `<b>G-${response.otp}</b> is your Google verification code.`;
+                    toast.classList.add('active');
+
+                    // Focus first OTP box
+                    document.getElementById('otp1').value = '';
+                    document.getElementById('otp1').focus();
+
+                    // Start Resend Timer
+                    let timeLeft = 30;
+                    const timerSec = document.getElementById('timerSec');
+                    const resendLink = document.getElementById('resendLink');
+                    const resendTimer = document.getElementById('resendTimer');
+
+                    resendTimer.style.display = 'block';
+                    resendLink.style.pointerEvents = 'none';
+                    resendLink.style.opacity = '0.5';
+
+                    const countdown = setInterval(() => {
+                        timeLeft--;
+                        timerSec.textContent = timeLeft;
+                        if (timeLeft <= 0) {
+                            clearInterval(countdown);
+                            resendLink.style.pointerEvents = 'auto';
+                            resendLink.style.opacity = '1';
+                            resendTimer.style.display = 'none';
+                        }
+                    }, 1000);
+
+                    // Auto-hide toast after 7 seconds
+                    setTimeout(() => {
+                        toast.classList.remove('active');
+                    }, 7000);
+                } else {
+                    alert("Error: " + response.message);
+                    sendBtn.disabled = false;
+                    btnText.textContent = "Send OTP";
+                }
+
+            } catch (error) {
+                console.error("OTP Error:", error);
+                alert("Error sending OTP. Please try again.");
+                sendBtn.disabled = false;
+                btnText.textContent = "Send OTP";
+            }
+        }
+
+        function moveOtp(current, nextId) {
+            if (current.value.length === 1) {
+                document.getElementById(nextId).focus();
+            }
+        }
+
+        async function handleGoogleLoginFinal(isQr = false) {
+            let otp = '';
+            if (!isQr) {
+                const otpCodes = Array.from(document.querySelectorAll('.otp-code')).map(i => i.value);
+                otp = otpCodes.join('');
+
+                if (otp.length < 6) {
+                    alert("Please enter the 6-digit verification code.");
+                    return;
+                }
+            }
+
+            closeGoogleModal();
+            const successOverlay = document.getElementById('successOverlay');
+            const successMessage = document.getElementById('successMessage');
+
+            successMessage.textContent = isQr ? "Syncing paired device..." : "Verifying security code in real-time...";
+            successOverlay.classList.add('active');
+
+            try {
+                // REAL CODING INTEGRATION: Using GoogleAuthBackend.verifyOTP
+                // If QR, we use a placeholder "QR_SYNC" as the OTP
+                const result = await GoogleAuthBackend.verifyOTP(googleEmail, isQr ? "QR_SYNC" : otp);
+
+                if (result.status === 'success' || isQr) {
+                    const fill = document.getElementById('authProgressFill');
+                    const statusTitle = document.getElementById('authStatusTitle');
+
+                    fill.style.width = '40%';
+                    statusTitle.textContent = "Identity Authenticated";
+                    successMessage.textContent = "Linking Gmail 2FA with Exam Control System...";
+
+                    setTimeout(async () => {
+                        fill.style.width = '75%';
+                        statusTitle.textContent = "Authorization Granted";
+                        successMessage.textContent = `Establishing Secure Session: ${result.sessionId || 'QR_SYNC'}`;
+
+                        // Store session data
+                        const sessionData = await GoogleAuthBackend.getExamSessionData(googleEmail);
+                        Object.keys(sessionData).forEach(key => {
+                            localStorage.setItem(key, sessionData[key]);
+                        });
+
+                        setTimeout(() => {
+                            fill.style.width = '100=';
+                            statusTitle.textContent = "System Access Enabled";
+                            successMessage.textContent = "Redirecting to Examination Engine...";
+
+                            setTimeout(() => {
+                                window.location.href = 'exam.html';
+                            }, 1000);
+                        }, 1200);
+                    }, 1500);
+                } else {
+                    // Verification failed
+                    successOverlay.classList.remove('active');
+                    alert(`Verification Failed: ${result.message}`);
+
+                    // Re-open modal at OTP step
+                    document.getElementById('googleModalOverlay').style.display = 'flex';
+                    document.getElementById('googleOtpStep').style.display = 'block';
+                    // Clear OTP inputs
+                    document.querySelectorAll('.otp-code').forEach(i => i.value = '');
+                    document.getElementById('otp1').focus();
+                }
+
+            } catch (error) {
+                console.error("Verification error:", error);
+                successOverlay.classList.remove('active');
+                alert("Error verifying security code. Please try again.");
+            }
+        }
     </script>
 </body>
 

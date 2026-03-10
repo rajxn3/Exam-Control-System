@@ -6,46 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exam Interface - Exam Control System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@400;500;600&family=Inter:wght@400;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@400;500;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/face-api.js/dist/face-api.min.js"></script>
-    <!-- Firebase SDK Configuration -->
-    <script type="importmap">
-    {
-      "imports": {
-        "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
-        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js",
-        "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"
-      }
-    }
-    </script>
-    <script type="module">
-        import { initializeApp } from "firebase/app";
-        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, limit } from "firebase/firestore";
-        import { getAuth } from "firebase/auth";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCWP3hxl6VwnwMt9eO3N5OdXR97dJcW3h4",
-            authDomain: "exam-control-system.firebaseapp.com",
-            projectId: "exam-control-system",
-            storageBucket: "exam-control-system.firebasestorage.app",
-            messagingSenderId: "130227673327",
-            appId: "1:130227673327:web:8ebc5f9d82071317ff631a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        window.firebaseApp = app;
-        window.db = db;
-        window.auth = auth;
-        window.firebaseFirestore = { collection, addDoc, getDocs, query, where, orderBy, limit };
-
-        console.log("🔥 Firebase initialized on exam page");
-    </script>
-
+    <script type="module" src="js/firebase-config.js"></script>
     <style>
         body {
             background: #f5f7fa;
@@ -399,17 +362,9 @@
         }
 
         @keyframes pulse-timer {
-            0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
-
-            100% {
-                opacity: 1;
-            }
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
 
         .mark-review-btn {
@@ -803,25 +758,13 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         @keyframes slideUp {
-            from {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .modal-score-circle {
@@ -957,10 +900,8 @@
 
         #examGateCanvas {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 0;
             pointer-events: none;
         }
@@ -988,20 +929,9 @@
         }
 
         @keyframes pulse-gold {
-            0% {
-                transform: scale(1);
-                filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0));
-            }
-
-            50% {
-                transform: scale(1.05);
-                filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4));
-            }
-
-            100% {
-                transform: scale(1);
-                filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0));
-            }
+            0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4)); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0)); }
         }
 
         .start-exam-title {
@@ -1009,7 +939,7 @@
             font-size: 2rem;
             color: #f5e8b0;
             margin-bottom: 15px;
-            text-shadow: 0 2px 15px rgba(180, 130, 10, 0.5);
+            text-shadow: 0 2px 15px rgba(180,130,10,0.5);
         }
 
         .start-exam-list {
@@ -1032,9 +962,7 @@
             font-size: 0.95rem;
         }
 
-        .start-exam-list li:last-child {
-            margin-bottom: 0;
-        }
+        .start-exam-list li:last-child { margin-bottom: 0; }
 
         .start-exam-list i {
             color: #d4af37;
@@ -1078,9 +1006,8 @@
                 <i class="fas fa-shield-alt"></i>
             </div>
             <h1 class="start-exam-title">Proctored Examination Session</h1>
-            <p style="color: rgba(230,205,130,0.85); font-size: 1.05rem; letter-spacing: 1px;">Secure Browser &amp; AI
-                Monitoring Initialized</p>
-
+            <p style="color: rgba(230,205,130,0.85); font-size: 1.05rem; letter-spacing: 1px;">Secure Browser &amp; AI Monitoring Initialized</p>
+            
             <ul class="start-exam-list">
                 <li><i class="fas fa-video"></i> Camera will start upon session entry</li>
                 <li><i class="fas fa-user-shield"></i> AI real-time facial tracking active</li>
@@ -1107,8 +1034,7 @@
 
         <!-- Institutional Hub (Center) -->
         <div class="header-central-branding">
-            <img src="logo.png" alt="University Logo" class="header-college-logo"
-                onerror="this.src='https://via.placeholder.com/80?text=LOGO'">
+            <img src="logo.png" alt="University Logo" class="header-college-logo" onerror="this.src='https://via.placeholder.com/80?text=LOGO'">
             <div class="header-branding-text">
                 <span class="header-college-name">MARUTAM NELLI POLYTECHNIC COLLEGE</span>
                 <span class="header-college-sub">(Approved by AICTE New Delhi & Affiliated to DOTE Chennai)</span>
@@ -1149,8 +1075,7 @@
                         <div class="status-dot active" id="webcamIndicator"></div>
                         <span id="webcamStatusText">Camera</span>
                     </div>
-                    <div class="webcam-indicator" style="cursor: pointer;" onclick="addFaceStrike()"
-                        title="Click to manually record a face strike">
+                    <div class="webcam-indicator" style="cursor: pointer;" onclick="addFaceStrike()" title="Click to manually record a face strike">
                         <div class="status-dot active" id="faceIndicator"></div>
                         <span id="faceStatusText">Detected</span>
                     </div>
@@ -1167,8 +1092,7 @@
                 </div>
             </div>
 
-            <h3
-                style="text-align: center; margin-top: 25px; color: #1e3c72; font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+            <h3 style="text-align: center; margin-top: 25px; color: #1e3c72; font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 10px;">
                 <i class="fas fa-th"></i> Questions Palette
             </h3>
             <div class="questions-palette" id="questionsPalette">
@@ -1184,11 +1108,9 @@
                     <div class="strike" id="strikeCount">0</div>
                     <span style="color: #c0392b; font-weight: 600;">Strikes Detected</span>
                 </div>
-                <div
-                    style="display: flex; justify-content: space-between; margin-top: 10px; border-top: 1px dashed rgba(231,76,60,0.2); padding-top: 8px;">
+                <div style="display: flex; justify-content: space-between; margin-top: 10px; border-top: 1px dashed rgba(231,76,60,0.2); padding-top: 8px;">
                     <small id="violationText" style="color: #666; font-size: 0.8rem;">0/4 violations allowed</small>
-                    <small id="sidebarAttendedCount"
-                        style="color: #1e3c72; font-weight: 700; font-size: 0.8rem;">Attended: 0/60</small>
+                    <small id="sidebarAttendedCount" style="color: #1e3c72; font-weight: 700; font-size: 0.8rem;">Attended: 0/60</small>
                 </div>
             </div>
 
@@ -1206,7 +1128,7 @@
         <div class="exam-middle-panel">
             <div class="question-header">
                 <div id="questionNumber">Question 1 of 60</div>
-
+                
                 <div class="question-timer-badge" id="qTimerBadge">
                     <i class="fas fa-history"></i> <span id="qRemainingText">02:00</span>
                 </div>
@@ -1231,12 +1153,12 @@
                     <i class="fas fa-arrow-left"></i> Previous
                 </button>
 
-                <button class="nav-btn" onclick="addFaceStrike()"
+                <button class="nav-btn" onclick="addFaceStrike()" 
                     style="font-size: 0.9rem; padding: 10px 20px; background: white; border: 2.5px solid #e67e22; color: #e67e22; border-radius: 40px; cursor: pointer; transition: all 0.3s ease; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(230, 126, 34, 0.15);">
                     <i class="fas fa-user-times" style="font-size: 1.1rem;"></i> Face Strike
                 </button>
 
-                <button class="nav-btn" onclick="recordViolation('Manual Administrator Violation')"
+                <button class="nav-btn" onclick="recordViolation('Manual Administrator Violation')" 
                     style="font-size: 0.9rem; padding: 10px 20px; background: white; border: 2.5px solid #e74c3c; color: #e74c3c; border-radius: 40px; cursor: pointer; transition: all 0.3s ease; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(231, 76, 60, 0.15);">
                     <i class="fas fa-exclamation-triangle" style="font-size: 1.1rem;"></i> Record Violation
                 </button>
@@ -1269,17 +1191,13 @@
                     <span>Questions Attended</span>
                     <span id="attendedCountDisplay" class="status-dot-val">0 / 60</span>
                 </div>
-                <div class="status-item" style="cursor: pointer;" onclick="addFaceStrike()"
-                    title="Click to simulate face not detected">
+                <div class="status-item" style="cursor: pointer;" onclick="addFaceStrike()" title="Click to simulate face not detected">
                     <span>Face Strikes</span>
-                    <span id="faceStrikeText" class="status-dot-val"
-                        style="color: #e67e22; font-weight: bold; padding: 2px 8px; background: rgba(230,126,34,0.1); border-radius: 4px;">0
-                        / 2</span>
+                    <span id="faceStrikeText" class="status-dot-val" style="color: #e67e22; font-weight: bold; padding: 2px 8px; background: rgba(230,126,34,0.1); border-radius: 4px;">0 / 2</span>
                 </div>
                 <div class="status-item">
                     <span>Session Status</span>
-                    <span id="sessionSecureText"
-                        style="color: #27ae60; font-weight: bold; font-size: 0.85rem;">SECURE</span>
+                    <span id="sessionSecureText" style="color: #27ae60; font-weight: bold; font-size: 0.85rem;">SECURE</span>
                 </div>
             </div>
 
@@ -1431,7 +1349,7 @@
             <div class="profile-avatar-large" id="modalProfileAvatar">S</div>
             <h2 style="color: white; margin-bottom: 5px;" id="modalProfileName">Student Name</h2>
             <p style="color: #94a3b8; font-size: 0.9rem;">Student Profile</p>
-
+            
             <div class="profile-info-grid">
                 <div class="profile-info-item">
                     <span class="profile-info-label">Student ID</span>
@@ -1443,8 +1361,7 @@
                 </div>
                 <div class="profile-info-item">
                     <span class="profile-info-label">Questions Overview</span>
-                    <div class="profile-info-value" id="modalProfileQuestions"
-                        style="font-size: 0.9rem; line-height: 1.6;">
+                    <div class="profile-info-value" id="modalProfileQuestions" style="font-size: 0.9rem; line-height: 1.6;">
                         Answered: <span id="modalAns" style="color: #27ae60; font-weight: 700;">0 / 60</span><br>
                         Visited: <span id="modalVis" style="color: #3498db; font-weight: 700;">1 / 60</span><br>
                         Skipped: <span id="modalSkp" style="color: #e67e22; font-weight: 700;">0</span>
@@ -1463,10 +1380,8 @@
                     <div class="profile-info-value" id="modalProfileTime">Now</div>
                 </div>
             </div>
-
-            <button class="nav-btn next-btn"
-                onclick="document.getElementById('studentProfileModal').style.display='none'"
-                style="margin-top: 30px; width: 100%; justify-content: center;">
+            
+            <button class="nav-btn next-btn" onclick="document.getElementById('studentProfileModal').style.display='none'" style="margin-top: 30px; width: 100%; justify-content: center;">
                 Close Profile
             </button>
         </div>
@@ -1534,7 +1449,7 @@
         }
 
         // Start Exam Gate Animation
-        (function () {
+        (function() {
             const canvas = document.getElementById('examGateCanvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
@@ -1553,7 +1468,7 @@
                 grad.addColorStop(1, '#b8860b');
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, W, H);
-                const rg = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, Math.min(W, H) * 0.65);
+                const rg = ctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, Math.min(W,H)*0.65);
                 rg.addColorStop(0, 'rgba(255,245,200,0.55)');
                 rg.addColorStop(1, 'rgba(180,120,0,0)');
                 ctx.fillStyle = rg;
@@ -1566,9 +1481,9 @@
                 ctx.rotate(angle);
                 ctx.globalAlpha = alpha;
                 ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.bezierCurveTo(width * 0.6, -len * 0.3, width * 0.6, -len * 0.7, 0, -len);
-                ctx.bezierCurveTo(-width * 0.6, -len * 0.7, -width * 0.6, -len * 0.3, 0, 0);
+                ctx.moveTo(0,0);
+                ctx.bezierCurveTo(width*0.6,-len*0.3,width*0.6,-len*0.7,0,-len);
+                ctx.bezierCurveTo(-width*0.6,-len*0.7,-width*0.6,-len*0.3,0,0);
                 ctx.closePath();
                 ctx.fillStyle = color;
                 ctx.fill();
@@ -1578,20 +1493,20 @@
             function drawFlower(cx, cy, size, baseAngle, phase, alpha) {
                 const n = 8;
                 for (let i = 0; i < n; i++) {
-                    const ang = baseAngle + (i / n) * Math.PI * 2;
-                    drawPetal(cx, cy, size, size * 0.45, ang + Math.sin(phase + i * 0.7) * 0.04,
-                        alpha * (0.7 + 0.25 * Math.sin(phase + i)), `rgba(180,120,10,${alpha * 0.85})`);
+                    const ang = baseAngle + (i/n)*Math.PI*2;
+                    drawPetal(cx, cy, size, size*0.45, ang + Math.sin(phase+i*0.7)*0.04,
+                        alpha*(0.7+0.25*Math.sin(phase+i)), `rgba(180,120,10,${alpha*0.85})`);
                 }
                 for (let i = 0; i < n; i++) {
-                    const ang = baseAngle + (i / n) * Math.PI * 2 + Math.PI / n;
-                    drawPetal(cx, cy, size * 0.65, size * 0.32, ang,
-                        alpha * 0.85, `rgba(220,160,30,${alpha * 0.9})`);
+                    const ang = baseAngle + (i/n)*Math.PI*2 + Math.PI/n;
+                    drawPetal(cx, cy, size*0.65, size*0.32, ang,
+                        alpha*0.85, `rgba(220,160,30,${alpha*0.9})`);
                 }
                 ctx.save();
                 ctx.globalAlpha = alpha;
                 ctx.beginPath();
-                ctx.arc(cx, cy, size * 0.18, 0, Math.PI * 2);
-                const dg = ctx.createRadialGradient(cx - size * 0.05, cy - size * 0.05, 0, cx, cy, size * 0.18);
+                ctx.arc(cx, cy, size*0.18, 0, Math.PI*2);
+                const dg = ctx.createRadialGradient(cx-size*0.05, cy-size*0.05, 0, cx, cy, size*0.18);
                 dg.addColorStop(0, '#fff0a0');
                 dg.addColorStop(1, `rgba(240,200,60,${alpha})`);
                 ctx.fillStyle = dg;
@@ -1600,58 +1515,58 @@
             }
 
             const DECO = [
-                { x: 0.82, y: 0.75, size: 90, rot: -0.4, alpha: 0.55 },
-                { x: 0.10, y: 0.20, size: 65, rot: 0.6, alpha: 0.45 },
-                { x: 0.90, y: 0.10, size: 50, rot: 1.2, alpha: 0.35 },
-                { x: 0.05, y: 0.85, size: 70, rot: 0.3, alpha: 0.40 },
+                {x:0.82,y:0.75,size:90,rot:-0.4,alpha:0.55},
+                {x:0.10,y:0.20,size:65,rot:0.6,alpha:0.45},
+                {x:0.90,y:0.10,size:50,rot:1.2,alpha:0.35},
+                {x:0.05,y:0.85,size:70,rot:0.3,alpha:0.40},
             ];
 
-            const FLOWERS = Array.from({ length: 6 }, () => ({
-                x: 0.05 + Math.random() * 0.9,
-                y: 0.5 + Math.random() * 0.7,
-                size: 25 + Math.random() * 40,
-                speed: 0.00018 + Math.random() * 0.00025,
-                drift: (Math.random() - 0.5) * 0.0002,
-                phase: Math.random() * Math.PI * 2,
-                rotSpeed: (Math.random() - 0.5) * 0.008,
-                rot: Math.random() * Math.PI * 2,
-                alpha: 0.5 + Math.random() * 0.35,
+            const FLOWERS = Array.from({length:6}, () => ({
+                x: 0.05+Math.random()*0.9,
+                y: 0.5+Math.random()*0.7,
+                size: 25+Math.random()*40,
+                speed: 0.00018+Math.random()*0.00025,
+                drift: (Math.random()-0.5)*0.0002,
+                phase: Math.random()*Math.PI*2,
+                rotSpeed: (Math.random()-0.5)*0.008,
+                rot: Math.random()*Math.PI*2,
+                alpha: 0.5+Math.random()*0.35,
             }));
 
-            const SPARKS = Array.from({ length: 50 }, () => ({
-                x: Math.random(), y: Math.random(),
-                r: 0.8 + Math.random() * 2,
-                speed: 0.0002 + Math.random() * 0.0005,
-                phase: Math.random() * Math.PI * 2,
-                alpha: 0.2 + Math.random() * 0.5,
+            const SPARKS = Array.from({length:50}, () => ({
+                x:Math.random(), y:Math.random(),
+                r:0.8+Math.random()*2,
+                speed:0.0002+Math.random()*0.0005,
+                phase:Math.random()*Math.PI*2,
+                alpha:0.2+Math.random()*0.5,
             }));
 
             function draw() {
                 frame++;
-                ctx.clearRect(0, 0, W, H);
+                ctx.clearRect(0,0,W,H);
                 drawBg();
                 DECO.forEach(d => {
-                    const pulse = 0.97 + 0.03 * Math.sin(frame * 0.015 + d.rot);
-                    drawFlower(d.x * W, d.y * H, d.size * pulse, d.rot + frame * 0.003, frame * 0.012, d.alpha);
+                    const pulse = 0.97+0.03*Math.sin(frame*0.015+d.rot);
+                    drawFlower(d.x*W, d.y*H, d.size*pulse, d.rot+frame*0.003, frame*0.012, d.alpha);
                 });
                 FLOWERS.forEach(f => {
                     f.y -= f.speed; f.x += f.drift; f.rot += f.rotSpeed; f.phase += 0.01;
-                    if (f.y < -0.15) { f.y = 1.15; f.x = 0.05 + Math.random() * 0.9; }
+                    if (f.y < -0.15) { f.y = 1.15; f.x = 0.05+Math.random()*0.9; }
                     if (f.x < -0.1 || f.x > 1.1) f.drift *= -1;
-                    drawFlower(f.x * W, f.y * H, f.size, f.rot, f.phase, f.alpha);
+                    drawFlower(f.x*W, f.y*H, f.size, f.rot, f.phase, f.alpha);
                 });
                 SPARKS.forEach(s => {
                     s.y -= s.speed;
-                    s.x += Math.sin(s.phase + frame * 0.02) * 0.0003;
+                    s.x += Math.sin(s.phase+frame*0.02)*0.0003;
                     if (s.y < -0.02) { s.y = 1.02; s.x = Math.random(); }
-                    const tw = (Math.sin(s.phase + frame * 0.04) + 1) / 2;
+                    const tw = (Math.sin(s.phase+frame*0.04)+1)/2;
                     ctx.save();
-                    ctx.globalAlpha = s.alpha * tw;
+                    ctx.globalAlpha = s.alpha*tw;
                     ctx.fillStyle = 'rgba(255,240,150,1)';
                     ctx.shadowColor = 'rgba(255,220,80,0.9)';
                     ctx.shadowBlur = 6;
                     ctx.beginPath();
-                    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+                    ctx.arc(s.x*W, s.y*H, s.r, 0, Math.PI*2);
                     ctx.fill();
                     ctx.restore();
                 });
@@ -1665,10 +1580,10 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             console.log("Exam System Initializing...");
-
+            
             const isLoggedIn = localStorage.getItem('isLoggedIn');
             const examLoggedIn = localStorage.getItem('examLoggedIn');
-
+            
             if (!isLoggedIn && !examLoggedIn) {
                 console.warn("Unauthorized access. Redirecting to login...");
                 window.location.href = 'login.html';
@@ -1677,18 +1592,18 @@
 
             const username = localStorage.getItem('examUsername') || localStorage.getItem('username') || 'Student Candidate';
             const examSubject = localStorage.getItem('examSubject') || 'Standardized Examination';
-
+            
             try {
-                if (document.getElementById('userName')) document.getElementById('userName').textContent = username;
-                if (document.getElementById('userAvatar')) document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
-                if (document.getElementById('userExam')) document.getElementById('userExam').textContent = `Exam: ${examSubject}`;
-                if (document.getElementById('examSubjectDisplay')) document.getElementById('examSubjectDisplay').textContent = examSubject;
+                if(document.getElementById('userName')) document.getElementById('userName').textContent = username;
+                if(document.getElementById('userAvatar')) document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
+                if(document.getElementById('userExam')) document.getElementById('userExam').textContent = `Exam: ${examSubject}`;
+                if(document.getElementById('examSubjectDisplay')) document.getElementById('examSubjectDisplay').textContent = examSubject;
 
                 await fetchExamQuestions();
                 initializeQuestionsPalette();
                 loadQuestion(1);
                 updateProgress();
-
+                
                 isSystemReady = true;
                 console.log("Exam System Ready for Entry.");
             } catch (err) {
@@ -1722,7 +1637,7 @@
             document.getElementById('integrityText').textContent = 'Secure';
 
             initializeExam();
-
+            
             examState.isExamActive = true;
 
             startExamTimer();
@@ -1755,7 +1670,7 @@
             document.getElementById('modalAns').textContent = `${answeredCount} / ${EXAM_CONFIG.totalQuestions}`;
             document.getElementById('modalVis').textContent = `${visitedCount} / ${EXAM_CONFIG.totalQuestions}`;
             document.getElementById('modalSkp').textContent = `${skippedCount}`;
-
+            
             const faceEl = document.getElementById('modalProfileFaceStatus');
             if (examState.faceDetected) {
                 faceEl.textContent = 'ACTIVE';
@@ -1829,7 +1744,7 @@
         async function initFaceDetection() {
             try {
                 const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models/';
-
+                
                 await Promise.all([
                     faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
                     faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
@@ -1915,7 +1830,7 @@
 
         function skipQuestion() {
             if (!examState.isExamActive) return;
-
+            
             if (examState.answers[examState.currentQuestion] === undefined) {
                 examState.skippedQuestions.add(examState.currentQuestion);
                 updatePaletteButton(examState.currentQuestion, 'skipped');
@@ -1970,8 +1885,8 @@
                     faceIndicator.className = 'status-dot inactive';
                     faceStatusText.textContent = 'Face Not Detected';
                     document.getElementById('faceStatus').className = 'status-dot danger';
-
-                    document.getElementById('proctoringText').innerHTML =
+                    
+                    document.getElementById('proctoringText').innerHTML = 
                         '<span style="color: #ff4757; cursor: pointer; text-decoration: underline;" onclick="addFaceStrike()">Report Detection Issue</span>';
 
                     if (timeSinceLastDetection > 1000) {
@@ -1996,7 +1911,7 @@
                 ctx.lineWidth = 3;
                 ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
 
-                if (Math.random() < 0.7) {
+                if (Math.random() < 0.7) { 
                     ctx.strokeStyle = '#3498db';
                     ctx.lineWidth = 2;
                     const faceX = canvas.width * 0.3 + Math.random() * canvas.width * 0.4;
@@ -2091,7 +2006,7 @@
 
         function loadQuestion(questionNumber) {
             examState.currentQuestion = questionNumber;
-
+            
             if (!examState.visitedQuestions) examState.visitedQuestions = new Set();
             examState.visitedQuestions.add(questionNumber);
 
@@ -2126,7 +2041,7 @@
                     if (examState.skippedQuestions.has(questionNumber)) {
                         return; // Cannot answer a skipped question
                     }
-
+                    
                     document.querySelectorAll('.option-btn').forEach(btn => {
                         btn.classList.remove('selected');
                     });
@@ -2181,7 +2096,7 @@
                     hasNext = true; break;
                 }
             }
-
+            
             nextBtn.disabled = !hasNext;
 
             if (!hasNext) {
@@ -2238,7 +2153,7 @@
             } else if (examState.skippedQuestions.has(questionNumber)) {
                 button.classList.add('skipped');
             }
-
+            
             document.querySelectorAll('.palette-btn').forEach(btn => {
                 const qNum = parseInt(btn.getAttribute('data-question'));
                 if (qNum !== questionNumber) {
@@ -2264,7 +2179,7 @@
 
         let globalAudioCtx = null;
         let lastBeepTime = 0;
-
+        
         function playBeep(isHighVolume = false) {
             try {
                 const now = Date.now();
@@ -2304,7 +2219,7 @@
             document.getElementById('progressBar').style.width = `${progress}%`;
             document.getElementById('progressText').textContent =
                 `${answeredCount}/${EXAM_CONFIG.totalQuestions}`;
-
+            
             const display = document.getElementById('attendedCountDisplay');
             if (display) {
                 display.textContent = `${answeredCount} / ${EXAM_CONFIG.totalQuestions}`;
@@ -2475,7 +2390,7 @@
                 'Browser tab lost focus',
                 'Fullscreen mode exited'
             ];
-
+            
             if (examState.isSystemSetup && focusRelated.some(r => reason.includes(r))) {
                 console.log("Suppressing focus violation during setup:", reason);
                 return;
@@ -2488,7 +2403,7 @@
 
             examState.violations++;
             const count = examState.violations;
-            const max = EXAM_CONFIG.maxViolations;
+            const max   = EXAM_CONFIG.maxViolations;
 
             const violationText = document.getElementById('violationText');
             if (violationText) violationText.textContent = `${count}/${max} violations`;
@@ -2510,7 +2425,7 @@
                 if (violModal) {
                     const reasonTxt = document.getElementById('violationReason');
                     if (reasonTxt) reasonTxt.innerHTML += '<br><strong style="color: #e74c3c; font-size: 1.2rem;">RESULT LOCKED - NO CHANGES ALLOWED</strong>';
-
+                    
                     const ackBtn = violModal.querySelector('.nav-btn.next-btn');
                     if (ackBtn) {
                         ackBtn.textContent = 'Exam Terminated — Viewing Final Result...';
@@ -2519,7 +2434,7 @@
                         ackBtn.disabled = true;
                     }
                     const loginBtn = violModal.querySelector('.nav-btn.prev-btn');
-                    if (loginBtn) loginBtn.style.display = 'none';
+                    if (loginBtn) loginBtn.style.display = 'none'; 
                 }
 
                 setTimeout(() => {
@@ -2596,7 +2511,7 @@
             localStorage.setItem('lastExamResults', JSON.stringify(examResults));
 
             // Persistent SQL Sync via Node Server
-            const studentId = localStorage.getItem('userId') || 1;
+            const studentId = localStorage.getItem('userId') || 1; 
             const examId = 1; // Default to 1 for demo
 
             fetch('http://localhost:5000/api/results/submit', {
@@ -2614,9 +2529,9 @@
                     status: isAutoSubmit ? 'Timed Out' : 'Completed'
                 })
             })
-                .then(res => res.json())
-                .then(data => console.log("✅ Result saved to SQL database:", data))
-                .catch(err => console.warn("⚠️ Database sync failed (local only mode):", err));
+            .then(res => res.json())
+            .then(data => console.log("✅ Result saved to SQL database:", data))
+            .catch(err => console.warn("⚠️ Database sync failed (local only mode):", err));
 
             const resultsHistory = JSON.parse(localStorage.getItem('studentResultsHistory') || '[]');
             resultsHistory.unshift({
@@ -2738,8 +2653,8 @@
                         status: 'Terminated'
                     })
                 }).then(res => res.json())
-                    .then(data => console.log("Terminated result saved to SQL:", data))
-                    .catch(err => console.error("SQL Save Failed:", err));
+                  .then(data => console.log("Terminated result saved to SQL:", data))
+                  .catch(err => console.error("SQL Save Failed:", err));
             }
 
             const resultsHistory = JSON.parse(localStorage.getItem('studentResultsHistory') || '[]');

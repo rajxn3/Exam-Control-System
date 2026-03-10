@@ -38,121 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('examLoginForm')?.addEventListener('submit', handleLoginFormSubmit);
-    document.getElementById('registerForm')?.addEventListener('submit', handleRegisterFormSubmit);
-    
-    // Fetch recent logins from Firestore for display
-    setTimeout(fetchRecentLogins, 2000);
 });
-
-/**
- * REGISTRATION LOGIC
- */
-window.openRegisterModal = function() {
-    const modal = document.getElementById('registerModal');
-    if (modal) modal.style.display = 'flex';
-}
-
-window.closeRegisterModal = function() {
-    const modal = document.getElementById('registerModal');
-    if (modal) modal.style.display = 'none';
-    document.getElementById('regStatus').style.display = 'none';
-}
-
-async function handleRegisterFormSubmit(e) {
-    e.preventDefault();
-    const name = document.getElementById('regName')?.value.trim();
-    const user = document.getElementById('regUser')?.value.trim().toLowerCase();
-    const pass = document.getElementById('regPass')?.value.trim();
-    const status = document.getElementById('regStatus');
-    const btnText = document.getElementById('regBtnText');
-    
-    if (!name || !user || !pass) return;
-
-    if (btnText) btnText.textContent = "Registering...";
-    
-    try {
-        if (window.db && window.firebaseFirestore) {
-            const { collection, addDoc, getDocs, query, where } = window.firebaseFirestore;
-            
-            // Check if username exists
-            const q = query(collection(window.db, "users"), where("username", "==", user));
-            const snap = await getDocs(q);
-            
-            if (!snap.empty) {
-                if (status) {
-                    status.innerHTML = `<span style="color:#f87171;">Username already exists.</span>`;
-                    status.style.display = 'block';
-                }
-                if (btnText) btnText.textContent = "Create Account";
-                return;
-            }
-
-            // Save new user
-            await addDoc(collection(window.db, "users"), {
-                full_name: name,
-                username: user,
-                password: pass,
-                role: 'student', // Default role for registration
-                examCode: 'EXAM2026',
-                timestamp: new Date().toISOString(),
-                origin: 'Hosted_Registration'
-            });
-
-            if (status) {
-                status.innerHTML = `<span style="color:#4ade80;">Success! Account created for ${user}. Login now.</span>`;
-                status.style.display = 'block';
-                setTimeout(() => {
-                    closeRegisterModal();
-                    fillForm(user, pass, 'EXAM2026');
-                }, 2000);
-            }
-        }
-    } catch (err) {
-        console.error("Firestore Reg Error:", err);
-        if (status) {
-            status.innerHTML = `<span style="color:#f87171;">Request failed. Try again.</span>`;
-            status.style.display = 'block';
-        }
-    }
-    if (btnText) btnText.textContent = "Create Account";
-}
-
-/**
- * FIRESTORE REAL-TIME LOG MONITORING
- */
-function fetchRecentLogins() {
-    const logSection = document.getElementById('firestoreLogSection');
-    const logContainer = document.getElementById('loginLogs');
-    
-    if (window.db && window.firebaseFirestore && logContainer) {
-        try {
-            const { collection, query, orderBy, limit, onSnapshot } = window.firebaseFirestore;
-            const q = query(collection(window.db, "login_attempts"), orderBy("timestamp", "desc"), limit(5));
-            
-            // Real-time listener
-            onSnapshot(q, (querySnapshot) => {
-                if (!querySnapshot.empty) {
-                    if (logSection) logSection.style.display = 'block';
-                    logContainer.innerHTML = '';
-                    querySnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        const time = new Date(data.timestamp).toLocaleTimeString();
-                        const p = document.createElement('p');
-                        p.style.margin = '4px 0';
-                        p.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-                        p.style.paddingBottom = '3px';
-                        p.innerHTML = `<span style="color: #4ade80;">[${time}]</span> <b>${data.username}</b> attempt as <i>${data.role}</i>`;
-                        logContainer.appendChild(p);
-                    });
-                }
-            }, (err) => {
-                console.warn("Firestore Real-time error:", err);
-            });
-        } catch (err) {
-            console.warn("Firestore initialization error:", err);
-        }
-    }
-}
 
 /**
  * FORM UTILITIES
@@ -178,31 +64,11 @@ function selectRole(role) {
     const instructorCreds = document.getElementById('instructorCreds');
     const adminCreds = document.getElementById('adminCreds');
 
-    const examCodeLabel = document.querySelector('#examCodeGroup .form-label');
-    const examCodeSmall = document.querySelector('#examCodeGroup small');
-
-    if (examCodeGroup) examCodeGroup.style.display = 'block';
-    if (examCodeInput) {
-        examCodeInput.required = true;
-        if (role === 'student') {
-            if (examCodeLabel) examCodeLabel.textContent = 'Exam Code';
-            examCodeInput.placeholder = 'Enter exam code (e.g., CS101)';
-            if (examCodeSmall) examCodeSmall.textContent = 'Required for student access';
-        } else {
-            if (examCodeLabel) examCodeLabel.textContent = 'API Access Key';
-            examCodeInput.placeholder = 'Enter your API Access Key';
-            if (examCodeSmall) examCodeSmall.textContent = 'Required for secure portal access';
-        }
-    }
+    if (examCodeGroup) examCodeGroup.style.display = role === 'student' ? 'block' : 'none';
+    if (examCodeInput) examCodeInput.required = role === 'student';
 
     if (studentCreds) {
-        studentCreds.innerHTML = `
-            <p><strong>Student:</strong> raj / 9867 <small>(SQL)</small></p>
-            <p style="margin-top:5px; color:#d4af37; font-size:0.85rem;">
-                <i class="fas fa-database"></i> <b>100 Firestore Accounts available:</b><br>
-                User: <code>student1</code> ... <code>student100</code><br>
-                Pass: <code>student@Pass1</code> ... 100
-            </p>`;
+        studentCreds.innerHTML = `<p><strong>Student:</strong> raj / 9867 (from SQL)</p>`;
         studentCreds.style.display = role === 'student' ? 'block' : 'none';
     }
     if (instructorCreds) {
@@ -222,7 +88,7 @@ async function handleLoginFormSubmit(e) {
     e.preventDefault();
     const username = document.getElementById('username')?.value.trim();
     const password = document.getElementById('password')?.value.trim();
-    const examCode = document.getElementById('examCode')?.value.trim().toUpperCase() || '';
+    const examCode = currentRole === 'student' ? document.getElementById('examCode')?.value.trim().toUpperCase() : '';
     
     const loginBtn = document.getElementById('loginButton');
     const spinner = document.getElementById('btnSpinner');
@@ -231,85 +97,71 @@ async function handleLoginFormSubmit(e) {
 
     if (!username || !password) { showError(errorMessage, 'Please fill in all required fields'); return; }
     if (currentRole === 'student' && !examCode) { showError(errorMessage, 'Exam code is required'); return; }
-    if (currentRole !== 'student' && !examCode) { showError(errorMessage, 'API Access Key is required'); return; }
 
     if (loginBtn) loginBtn.disabled = true;
     if (spinner) spinner.style.display = 'inline-block';
     if (errorMessage) errorMessage.style.display = 'none';
 
-    let isFirestoreAuthValid = false;
-
-    // --- FIREBASE / FIRESTORE INTEGRATION ---
     try {
-        if (window.db && window.firebaseFirestore) {
-            const { collection, addDoc, getDocs, query, where } = window.firebaseFirestore;
-            
-            // 1. Log attempt to Firestore
-            const userData = {
-                role: currentRole,
-                username: username,
-                password: password, // In production, hash this
-                examCode: currentRole === 'student' ? examCode : '',
-                accessKey: currentRole !== 'student' ? examCode : '',
-                timestamp: new Date().toISOString()
-            };
-            await addDoc(collection(window.db, "login_attempts"), userData);
-            
-            // 2. AUTHENTICATION FALLBACK: Search for seeded user in Firestore
-            const userQuery = query(collection(window.db, "users"), 
-                where("username", "==", username), 
-                where("role", "==", currentRole)
-            );
-            const querySnapshot = await getDocs(userQuery);
-            
-            if (!querySnapshot.empty) {
-                const firestoreUser = querySnapshot.docs[0].data();
-                // Check password and exam code (if student) from Firestore record
-                if (firestoreUser.password === password) {
-                    if (currentRole === 'student') {
-                        // Allow if no specific examCode in record or if it matches
-                        if (!firestoreUser.examCode || firestoreUser.examCode === examCode) {
-                            isFirestoreAuthValid = true;
-                            console.log("🔍 Authenticated via Firestore records.");
-                        }
-                    } else if (firestoreUser.accessKey === examCode) {
-                        isFirestoreAuthValid = true;
-                    }
-                }
-            }
+        // --- STEP 1: AUTHENTICATE WITH FIREBASE ---
+        console.log("Checking Firestore for user...");
+        const firebaseUser = await authenticateWithFirebase(username, password, currentRole, examCode);
+        
+        if (firebaseUser) {
+            console.log("Firestore Authentication Successful!");
+            handleLoginSuccess(firebaseUser.full_name || username, currentRole, examCode);
+            return;
         }
-    } catch (err) {
-        console.warn("⚠️ Firestore Auth Sync Error:", err);
-    }
 
-    try {
-        // --- ATTEMPT REAL SQL LOGIN ---
+        // --- STEP 2: FALLBACK TO SQL SERVER ---
+        console.log("Attempting SQL Login...");
         const response = await fetch('http://localhost:5000/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password, role: currentRole })
         });
-
+        
         const data = await response.json();
         if (data.success) {
+            localStorage.setItem('userId', data.user.user_id);
+            if (data.user.student_info && data.user.student_info.student_id) {
+                localStorage.setItem('studentId', data.user.student_info.student_id);
+            }
             handleLoginSuccess(data.user.full_name || username, currentRole, examCode);
         } else {
-            // If SQL fails but Firestore auth was successful, allow bypass
-            if (isFirestoreAuthValid) {
-                handleLoginSuccess(username, currentRole, examCode);
-            } else {
-                handleLoginFailure(currentRole, loginBtn, spinner, btnText, errorMessage, data.message);
-            }
+            handleLoginFailure(currentRole, loginBtn, spinner, btnText, errorMessage, data.message);
         }
     } catch (error) {
-        // --- OFFLINE / FALLBACK MOCK LOGIC ---
+        console.warn('Network/Connection error. Checking local mock logic.');
+        // MOCK LOGIC FALLBACK
         const mockPass = (currentRole === 'student') ? '9867' : (currentRole === 'instructor' ? 'Instruter@123' : 'Admin@123');
-        
-        if (password === mockPass || isFirestoreAuthValid) {
+        if (password === mockPass) {
             handleLoginSuccess(username, currentRole, examCode);
         } else {
-            handleLoginFailure(currentRole, loginBtn, spinner, btnText, errorMessage, "Authentication failed. Server is currently unavailable.");
+            handleLoginFailure(currentRole, loginBtn, spinner, btnText, errorMessage, "Authentication failed. Check your connection.");
         }
+    }
+}
+
+// Firestore Authentication Check
+async function authenticateWithFirebase(username, password, role, examCode) {
+    if (!window.firebase_db || !window.fb_query) {
+        console.error("Firebase not ready");
+        return null;
+    }
+    try {
+        const usersRef = window.fb_collection(window.firebase_db, "users");
+        const q = window.fb_query(usersRef, 
+            window.fb_where("username", "==", username),
+            window.fb_where("password", "==", password),
+            window.fb_where("role", "==", role),
+            ...(role === 'student' ? [window.fb_where("examCode", "==", examCode)] : [])
+        );
+        const querySnapshot = await window.fb_getDocs(q);
+        return !querySnapshot.empty ? querySnapshot.docs[0].data() : null;
+    } catch (e) {
+        console.error("Firebase Auth Error:", e);
+        return null;
     }
 }
 
@@ -354,8 +206,59 @@ function handleLoginSuccess(username, role, examCode) {
     if (successOverlay) successOverlay.classList.add('active');
     if (progressFill) progressFill.style.width = '100%';
 
+    // Log login to Firebase if available
+    logToFirestore(username, role);
+
     setTimeout(() => { window.location.href = targetUrl; }, 2000);
 }
+
+/**
+ * FIREBASE LOGGING
+ */
+async function logToFirestore(username, role) {
+    if (!window.firebase_db || !window.fb_addDoc) {
+        console.warn("Firebase not initialized yet.");
+        return;
+    }
+    try {
+        await window.fb_addDoc(window.fb_collection(window.firebase_db, "user_logins"), {
+            username: username,
+            role: role,
+            loginTime: window.fb_serverTimestamp(),
+            userAgent: navigator.userAgent
+        });
+        console.log("Login documented in Firestore Database.");
+    } catch (e) {
+        console.error("Firestore Audit Error:", e);
+    }
+}
+
+/**
+ * DEVELOPER UTILITY
+ * Call this from console: seedFirestoreUsers() 
+ * to create demo accounts in your Firebase project.
+ */
+window.seedFirestoreUsers = async function() {
+    if (!window.firebase_db || !window.fb_addDoc) {
+        console.error("Firebase not initialized.");
+        return;
+    }
+    const users = [
+        { username: 'admin1', password: 'Admin@123', role: 'admin', full_name: 'System Admin' },
+        { username: 'instructor1', password: 'Instruter@123', role: 'instructor', full_name: 'Dr. Ramesh Kumar' },
+        { username: 'raj', password: '9867', role: 'student', examCode: 'CS101', full_name: 'Raj Priyan' }
+    ];
+
+    try {
+        for (const user of users) {
+            await window.fb_addDoc(window.fb_collection(window.firebase_db, "users"), user);
+            console.log(`Created user: ${user.username}`);
+        }
+        alert("Firestore Seeded Successfully!");
+    } catch (e) {
+        console.error("Seed Error:", e);
+    }
+};
 
 function handleLoginFailure(role, btn, spinner, text, errorEl, msg) {
     showError(errorEl, msg || `Invalid ${role} credentials. Please try again.`);
@@ -488,25 +391,6 @@ window.handleGoogleLoginFinal = async function(isQr = false) {
     const successMessage = document.getElementById('successMessage');
     const fill = document.getElementById('authProgressFill');
     if (successOverlay) successOverlay.classList.add('active');
-
-    // Save Google Login to Firestore
-    try {
-        if (window.db && window.firebaseFirestore) {
-            const { collection, addDoc } = window.firebaseFirestore;
-            await addDoc(collection(window.db, "users"), {
-                role: 'student',
-                username: googleEmail || 'verified_google_user',
-                authMethod: isQr ? 'QR_SYNC' : 'GOOGLE_OTP',
-                email: googleEmail,
-                timestamp: new Date().toISOString(),
-                status: 'AUTH_SUCCESS'
-            });
-            console.log("✅ Google Auth session synced to Firestore.");
-        }
-    } catch (err) {
-        console.error("❌ Google Auth Firestore Sync Error:", err);
-    }
-
     setTimeout(() => {
         if (fill) fill.style.width = '100%';
         localStorage.setItem('isLoggedIn', 'true');

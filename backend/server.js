@@ -6,11 +6,14 @@ const dotenv = require('dotenv');
 dotenv.config({ path: '../Sql Database/.env' }); // Adjust path to .env file
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+// Serve static files from the project root
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../')));
 
 // Database Pool
 const pool = mysql.createPool({
@@ -145,4 +148,5 @@ app.post('/api/results/submit', async (req, res) => {
 
 app.listen(port, () => {
     console.log(`🚀 Exam Management Server running at http://localhost:${port}`);
+    console.log(`📂 Web Interface: http://localhost:${port}/index.html`);
 });

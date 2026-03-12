@@ -4,2332 +4,443 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exam Login - Exam Control System</title>
+    <title>Candidate Login - Exam Control System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
-
-    <style>
-        :root {
-            --primary-dark: #09121d;
-            --navy-blue: #1e3c72;
-            --gold: #d4af37;
-            --gold-light: #f2d06b;
-            --platinum: #f5f7fa;
-            --success-green: #4ade80;
-        }
-
-        body {
-            background-color: #e8d5a3;
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            padding: 20px;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* === FLOWER CANVAS BACKGROUND === */
-        #flowerCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* --- MAIN LOGIN CONTAINER (MEDIUM SIZE) --- */
-        .login-container {
-            display: flex;
-            width: 100%;
-            max-width: 860px;
-            min-height: 540px;
-            background: transparent;
-            border-radius: 22px;
-            overflow: hidden;
-            box-shadow: 0 30px 80px rgba(120, 80, 0, 0.35), 0 0 40px rgba(180, 130, 20, 0.2);
-            border: 1px solid rgba(180, 130, 20, 0.5);
-            position: relative;
-            z-index: 10;
-            backdrop-filter: blur(2px);
-        }
-
-        /* --- LEFT PANEL --- */
-        .left-panel {
-            flex: 1;
-            background: rgba(80, 50, 5, 0.55);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            color: white;
-            padding: 35px 40px;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid rgba(180, 130, 20, 0.4);
-            position: relative;
-        }
-
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: #f5d87a;
-        }
-
-        .logo span {
-            color: #ffffff;
-            font-style: italic;
-        }
-
-        .tagline {
-            font-size: 1rem;
-            margin-bottom: 30px;
-            color: #aaa;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .exam-info {
-            margin-top: auto;
-            background: rgba(255, 255, 255, 0.04);
-            padding: 30px;
-            border-radius: 20px;
-            border: 1px solid rgba(212, 175, 55, 0.25);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 32px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(8px);
-        }
-
-        .exam-info h3 {
-            font-family: 'Playfair Display', serif;
-            color: var(--gold);
-            font-size: 1.4rem;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .exam-details {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .exam-detail {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .detail-label {
-            color: var(--gold-light);
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .detail-value {
-            color: #eee;
-            font-size: 0.95rem;
-        }
-
-        /* --- RIGHT PANEL --- */
-        .right-panel {
-            flex: 1.2;
-            padding: 40px 50px;
-            background: rgba(50, 30, 5, 0.38);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .welcome-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.9rem;
-            color: #f5e8b0;
-            margin-bottom: 6px;
-            text-align: center;
-            text-shadow: 0 2px 15px rgba(180, 130, 10, 0.5);
-        }
-
-        .welcome-subtitle {
-            color: rgba(230, 205, 130, 0.85);
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 0.95rem;
-        }
-
-        /* Role Selection */
-        .role-selection {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .role-btn {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid rgba(180, 130, 20, 0.45);
-            background: rgba(255, 220, 100, 0.07);
-            backdrop-filter: blur(10px);
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: rgba(245, 220, 140, 0.9);
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .role-btn i {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .role-btn.active {
-            background: rgba(160, 110, 0, 0.6);
-            color: #fff8e0;
-            border-color: #c8a020;
-            box-shadow: 0 0 18px rgba(200, 160, 30, 0.35), 0 8px 18px rgba(0, 0, 0, 0.3);
-        }
-
-        .role-btn:hover:not(.active) {
-            border-color: #c8a020;
-            background: rgba(200, 160, 30, 0.14);
-            transform: translateY(-2px);
-        }
-
-        .login-card {
-            background: rgba(255, 240, 180, 0.07);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 28px 32px;
-            box-shadow: 0 8px 40px rgba(120, 80, 0, 0.3), inset 0 1px 0 rgba(255, 220, 100, 0.15);
-            border: 1px solid rgba(180, 130, 20, 0.3);
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 7px;
-            font-weight: 600;
-            color: rgba(245, 220, 140, 0.95);
-            font-size: 0.88rem;
-        }
-
-        /* INPUT BOXES */
-        .form-input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 1px solid rgba(180, 130, 20, 0.45);
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s ease;
-            background: rgba(255, 230, 130, 0.08);
-            color: #fff;
-            height: 50px;
-            box-sizing: border-box;
-            backdrop-filter: blur(6px);
-        }
-
-        .form-input::placeholder {
-            color: rgba(220, 190, 100, 0.5);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #c8a020;
-            background: rgba(255, 220, 80, 0.13);
-            box-shadow: 0 0 0 3px rgba(200, 160, 30, 0.2), 0 0 15px rgba(200, 160, 30, 0.12);
-            transform: translateY(-1px);
-        }
-
-        .input-icon {
-            position: relative;
-        }
-
-        .input-icon i {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(200, 160, 30, 0.85);
-            font-size: 1.1rem;
-        }
-
-        .input-icon input {
-            padding-left: 55px;
-            /* More padding for icons */
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #c8a020, #e8c840);
-            color: #3a2500;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 8px;
-            height: 52px;
-            box-sizing: border-box;
-            box-shadow: 0 6px 20px rgba(180, 130, 0, 0.4);
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 28px rgba(180, 130, 0, 0.5);
-        }
-
-        /* GOOGLE LOGIN BUTTON */
-        .google-login-btn {
-            width: 100%;
-            padding: 12px;
-            background: #ffffff;
-            color: #444;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .google-login-btn:hover {
-            background: #f1f1f1;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .google-login-btn i {
-            color: #DB4437;
-            /* Google Red */
-            font-size: 1.1rem;
-        }
-
-        .login-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .spinner {
-            border: 3px solid rgba(9, 18, 29, 0.2);
-            border-top: 3px solid var(--primary-dark);
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            animation: spin 1s linear infinite;
-            display: none;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .error-message {
-            color: #e74c3c;
-            background: rgba(231, 76, 60, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            text-align: center;
-            display: none;
-            font-size: 0.95rem;
-        }
-
-        .demo-credentials {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255, 220, 100, 0.06);
-            border-radius: 10px;
-            border-left: 3px solid #c8a020;
-        }
-
-        .demo-credentials h4 {
-            color: #e8c840;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-
-        .demo-credentials p {
-            margin: 5px 0;
-            color: rgba(240, 210, 140, 0.8);
-            font-size: 0.82rem;
-        }
-
-        .demo-credentials strong {
-            color: rgba(255, 230, 160, 0.95);
-        }
-
-        .back-link {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .back-link a {
-            color: rgba(212, 175, 55, 0.9);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .back-link a:hover {
-            color: var(--gold-light);
-            text-decoration: underline;
-        }
-
-        /* --- SUCCESS OVERLAY --- */
-        .success-overlay {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.5);
-            background: rgba(5, 15, 40, 0.75);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            padding: 50px;
-            border-radius: 25px;
-            text-align: center;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(212, 175, 55, 0.2);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .success-overlay.active {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        /* --- SYSTEM STATUS BAR --- */
-        .system-status-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(13, 27, 42, 0.85);
-            backdrop-filter: blur(10px);
-            padding: 10px 40px;
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            border-top: 1px solid rgba(212, 175, 55, 0.3);
-            z-index: 100;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.85rem;
-            box-sizing: border-box;
-        }
-
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #4ade80;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #4ade80;
-            display: inline-block;
-        }
-
-        .status-dot.pulse {
-            animation: pulse 2s infinite;
-        }
-
-        .status-dot.gmail {
-            background: #EA4335;
-            box-shadow: 0 0 10px #EA4335;
-        }
-
-        #fetchGmailBtn {
-            background: transparent;
-            color: #1a73e8;
-            border: 1px solid #dadce0;
-            padding: 8px 15px;
-            font-size: 13px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            transition: all 0.2s;
-        }
-
-        #fetchGmailBtn:hover {
-            background: #f8f9fa;
-            border-color: #d2e3fc;
-        }
-
-        #fetchGmailBtn i {
-            color: #EA4335;
-        }
-
-        @keyframes pulse {
-            0% {
-                opacity: 0.4;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0.4;
-            }
-        }
-
-        #authHeader {
-            font-family: 'Playfair Display', serif;
-            color: var(--gold);
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-        }
-
-        #authSubheader {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        /* GOOGLE LIVE LOGIN MODAL */
-        .google-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 3000;
-            backdrop-filter: blur(5px);
-        }
-
-        .google-modal {
-            background: #ffffff;
-            width: 450px;
-            padding: 48px 40px 36px;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            text-align: center;
-            font-family: 'Roboto', arial, sans-serif;
-            position: relative;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .google-logo-img {
-            width: 75px;
-            margin: 0 auto 12px;
-        }
-
-        .google-title {
-            font-size: 24px;
-            font-weight: 400;
-            color: #202124;
-            margin-bottom: 8px;
-        }
-
-        .google-subtitle {
-            font-size: 16px;
-            color: #202124;
-            margin-bottom: 32px;
-        }
-
-        .google-profile-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 5px 10px;
-            border: 1px solid #dadce0;
-            border-radius: 20px;
-            width: fit-content;
-            margin: 0 auto 25px;
-            font-size: 14px;
-            color: #3c4043;
-            font-weight: 500;
-        }
-
-        .google-profile-pic {
-            width: 20px;
-            height: 20px;
-            background: #1a73e8;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-
-        .google-input-container {
-            margin-bottom: 24px;
-            text-align: left;
-        }
-
-        .google-input {
-            width: 100%;
-            padding: 13px 15px;
-            border: 1px solid #dadce0;
-            border-radius: 4px;
-            font-size: 16px;
-            color: #202124;
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        .google-input:focus {
-            border: 2px solid #1a73e8;
-            padding: 12px 14px;
-        }
-
-        .google-forgot {
-            color: #1a73e8;
-            font-weight: 600;
-            font-size: 14px;
-            text-align: left;
-            display: block;
-            margin-bottom: 40px;
-            text-decoration: none;
-        }
-
-        /* ACCOUNT CHOOSER STYLES */
-        .google-account-list {
-            text-align: left;
-            margin-bottom: 20px;
-        }
-
-        .google-account-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 0;
-            cursor: pointer;
-            border-bottom: 1px solid #dadce0;
-            transition: background 0.2s;
-        }
-
-        .google-account-item:hover {
-            background: #f8f9fa;
-        }
-
-        .google-account-item:last-child {
-            border-bottom: none;
-        }
-
-        .google-account-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 12px;
-            overflow: hidden;
-            background: #f1f3f4;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .google-account-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .google-account-avatar i {
-            font-size: 20px;
-            color: #5f6368;
-        }
-
-        .google-account-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .google-account-name {
-            font-size: 14px;
-            font-weight: 500;
-            color: #3c4043;
-        }
-
-        .google-account-email {
-            font-size: 12px;
-            color: #70757a;
-        }
-
-        .google-account-footer-links {
-            margin-top: 40px;
-            font-size: 12px;
-            color: #5f6368;
-            text-align: left;
-            line-height: 1.6;
-        }
-
-        .google-account-footer-links a {
-            color: #1a73e8;
-            text-decoration: none;
-        }
-
-        .google-modal-footer-nav {
-            margin-top: 24px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 20px;
-            font-size: 12px;
-            color: #70757a;
-        }
-
-        .google-modal-footer-nav div {
-            cursor: pointer;
-        }
-
-        .google-modal-footer-nav div:hover {
-            color: #202124;
-        }
-
-        .google-footer {
-            margin-top: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .otp-input-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-
-        .otp-code {
-            width: 50px;
-            height: 50px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: 600;
-            border: 1px solid #dadce0;
-            border-radius: 8px;
-            outline: none;
-        }
-
-        .otp-code:focus {
-            border: 2px solid #1a73e8;
-        }
-
-        /* SECURITY SCANNER STYLING */
-        .scanner-container {
-            margin: 20px 0;
-            text-align: left;
-            font-size: 13px;
-        }
-
-        .scan-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-            color: #5f6368;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.4s ease;
-        }
-
-        .scan-item.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .scan-icon {
-            font-size: 14px;
-        }
-
-        .scan-icon.scanning {
-            color: #1a73e8;
-            animation: fa-spin 2s infinite linear;
-        }
-
-        .scan-icon.done {
-            color: #1e8e3e;
-        }
-
-        .progress-bar-mini {
-            height: 4px;
-            background: #eee;
-            border-radius: 2px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-
-        .progress-fill-mini {
-            height: 100%;
-            background: #1a73e8;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        /* SECURITY HELP SECTION */
-        .google-help-screen {
-            display: none;
-            text-align: left;
-            font-size: 14px;
-            color: #3c4043;
-            overflow-y: auto;
-            max-height: 450px;
-            padding-right: 10px;
-        }
-
-        .google-help-screen h3 {
-            font-size: 18px;
-            font-weight: 500;
-            color: #202124;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .help-item {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #f1f3f4;
-        }
-
-        .help-item:last-child {
-            border-bottom: none;
-        }
-
-        .help-title {
-            font-weight: 600;
-            color: #202124;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .help-desc {
-            line-height: 1.5;
-            color: #5f6368;
-        }
-
-        .google-help-back {
-            color: #1a73e8;
-            font-weight: 500;
-            cursor: pointer;
-            margin-top: 20px;
-            display: inline-block;
-        }
-
-        /* SIMULATED TOAST */
-        .toast-notification {
-            position: fixed;
-            top: 20px;
-            right: -350px;
-            width: 300px;
-            background: #333;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-family: 'Poppins', sans-serif;
-            transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .toast-notification.active {
-            right: 20px;
-        }
-
-        .toast-icon {
-            background: #1a73e8;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .google-create-account {
-            color: #1a73e8;
-            font-weight: 500;
-            font-size: 14px;
-            text-decoration: none;
-        }
-
-        .google-next-btn {
-            background: #1a73e8;
-            color: #fff;
-            padding: 10px 24px;
-            border: none;
-            border-radius: 4px;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .google-next-btn:hover {
-            background: #1765cc;
-            box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302), 0 1px 3px 1px rgba(60, 64, 67, 0.149);
-        }
-
-        .google-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            color: #5f6368;
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 850px) {
-            .login-container {
-                flex-direction: column;
-                min-height: auto;
-            }
-
-            .left-panel {
-                padding: 30px;
-                border-right: none;
-                border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-            }
-
-            .right-panel {
-                padding: 40px;
-            }
-
-            .login-card {
-                padding: 30px;
-            }
-
-            .role-selection {
-                flex-direction: column;
-            }
-
-            /* Adjust input height for mobile */
-            .form-input {
-                height: 56px;
-                padding: 18px 16px;
-                font-size: 1rem;
-            }
-
-            .login-btn {
-                height: 58px;
-                padding: 18px;
-            }
-
-            .input-icon i {
-                font-size: 1.1rem;
-                left: 16px;
-            }
-
-            .input-icon input {
-                padding-left: 50px;
-            }
-        }
-
-        @media (max-width: 480px) {
-
-            .left-panel,
-            .right-panel {
-                padding: 25px;
-            }
-
-            .login-card {
-                padding: 25px;
-            }
-
-            .logo {
-                font-size: 2.2rem;
-            }
-
-            .welcome-title {
-                font-size: 1.8rem;
-            }
-
-            /* Further adjust input height for small screens */
-            .form-input {
-                height: 54px;
-                padding: 16px 14px;
-                font-size: 0.95rem;
-            }
-
-            .login-btn {
-                height: 56px;
-                padding: 16px;
-                font-size: 1rem;
-            }
-
-            .input-icon i {
-                font-size: 1rem;
-                left: 14px;
-            }
-
-            .input-icon input {
-                padding-left: 45px;
-            }
-
-            .form-group {
-                margin-bottom: 25px;
-            }
-        }
-    </style>
+    <!-- Font: Times New Roman (System Default) -->
+    <link rel="stylesheet" href="css/login-premium.css">
 </head>
 
 <body>
-
-    <!-- Broken Glass Canvas Background -->
-    <!-- Animated Flower Canvas Background -->
+    <div class="bg-mesh"></div>
     <canvas id="flowerCanvas"></canvas>
 
-    <div class="login-container">
-        <!-- Left Panel -->
-        <div class="left-panel">
-            <h1 class="logo">Exam<span>Control</span></h1>
-            <p class="tagline">Secure Examination Portal</p>
-
-            <div class="exam-info">
-                <h3><i class="fas fa-clipboard-list"></i> Exam Details</h3>
-                <div class="exam-details">
-                    <div class="exam-detail">
-                        <span class="detail-label">Exam Type:</span>
-                        <span class="detail-value">Online Proctored</span>
-                    </div>
-                    <div class="status-item">
-                        <span class="status-dot" id="gmailStatusDot"></span>
-                        <span>Gmail Connectivity: <b id="gmailStatusText" style="color: #fff;">PENDING</b></span>
-                    </div>
-                    <div class="status-item">
-                        <span class="status-dot pulse"></span>
-                        <span>Server: <b style="color: #fff;">ONLINE</b></span>
-                    </div>
-                    <div class="exam-detail">
-                        <span class="detail-label">Duration:</span>
-                        <span class="detail-value">2 Hours</span>
-                    </div>
-                    <div class="exam-detail">
-                        <span class="detail-label">Questions:</span>
-                        <span class="detail-value">60 Multiple Choice</span>
-                    </div>
-                    <div class="exam-detail">
-                        <span class="detail-label">Requirements:</span>
-                        <span class="detail-value">Webcam & Microphone</span>
-                    </div>
-                </div>
-            </div>
-
-            <div style="margin-top: auto;">
-                <h4 style="color: #ddd; margin-bottom: 15px; font-size: 0.9rem;">Important Instructions:</h4>
-                <ul style="list-style: none; padding: 0; font-size: 0.85rem; color: #aaa;">
-                    <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-camera" style="color: var(--gold);"></i>
-                        <span>Webcam must be enabled</span>
-                    </li>
-                    <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-ban" style="color: var(--gold);"></i>
-                        <span>No switching browser tabs</span>
-                    </li>
-                    <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-shield-alt" style="color: var(--gold);"></i>
-                        <span>AI proctoring is active</span>
-                    </li>
-                    <li style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-clock" style="color: var(--gold);"></i>
-                        <span>Timer starts upon login</span>
-                    </li>
-                </ul>
-            </div>
+    <div class="top-branding">
+        <h1>Exam<span>Control</span></h1>
+        <p class="tagline">Secure Examination Portal</p>
+        <div class="top-status">
+            <span class="status-dot"></span>
+            System Server Online
         </div>
+    </div>
 
-        <!-- Right Panel -->
-        <div class="right-panel">
-            <h2 class="welcome-title">Portal Access</h2>
-            <p class="welcome-subtitle">Select your role and enter credentials</p>
+    <div class="login-wrapper">
+        <div class="login-container">
+            <!-- Right Form Panel -->
+            <div class="form-panel">
+                <div class="form-header">
+                    <h2 id="formTitle">Candidate Login</h2>
+                    <p>Access your examination portal securely</p>
+                </div>
 
-            <!-- Role Selection -->
-            <div class="role-selection">
-                <div class="role-btn active" data-role="student" onclick="selectRole('student')">
-                    <i class="fas fa-user-graduate"></i>
-                    Student
+                <!-- Role Selection -->
+                <div class="role-tabs">
+                    <div class="role-tab active" data-role="student" onclick="selectRole('student')">Student</div>
+                    <div class="role-tab" data-role="instructor" onclick="selectRole('instructor')">Instructor</div>
+                    <div class="role-tab" data-role="admin" onclick="selectRole('admin')">Admin</div>
                 </div>
-                <div class="role-btn" data-role="instructor" onclick="selectRole('instructor')">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    Instructor
-                </div>
-                <div class="role-btn" data-role="admin" onclick="selectRole('admin')">
-                    <i class="fas fa-user-cog"></i>
-                    Admin
-                </div>
-            </div>
 
-            <div class="login-card">
                 <form id="examLoginForm">
-                    <div class="form-group">
-                        <label class="form-label" for="username">Username</label>
-                        <div class="input-icon">
+                    <div class="input-group">
+                        <label class="input-label">User Name</label>
+                        <div class="input-container">
                             <i class="fas fa-user"></i>
-                            <input type="text" id="username" class="form-input" placeholder="Enter your username"
-                                required>
+                            <input type="text" id="username" class="form-input" placeholder="Enter your username" required>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="password">Password</label>
-                        <div class="input-icon">
+                    <div class="input-group">
+                        <label class="input-label">Password</label>
+                        <div class="input-container">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="password" class="form-input" placeholder="Enter your password"
-                                required>
+                            <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                            <i class="fas fa-eye password-toggle" id="passwordToggle"></i>
                         </div>
                     </div>
 
-                    <div class="form-group" id="examCodeGroup">
-                        <label class="form-label" for="examCode">Exam Code</label>
-                        <div class="input-icon">
+                    <div class="input-group" id="examCodeGroup">
+                        <label class="input-label">Exam Code</label>
+                        <div class="input-container">
                             <i class="fas fa-key"></i>
-                            <input type="text" id="examCode" class="form-input"
-                                placeholder="Enter exam code (e.g., CS101)" required>
+                            <input type="text" id="examCode" class="form-input" placeholder="Enter exam code (e.g., CS101)">
                         </div>
-                        <small style="color: #666; font-size: 0.85rem; display: block; margin-top: 8px;">
-                            Required for student access only
-                        </small>
                     </div>
 
-                    <button type="submit" class="login-btn" id="loginButton">
-                        <span class="spinner" id="btnSpinner"></span>
+                    <!-- Captcha Section -->
+                    <div class="input-group">
+                        <label class="input-label">Captcha Code</label>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div class="captcha-box">
+                                <div class="captcha-image" id="captchaDisplay">ABCD</div>
+                                <i class="fas fa-sync-alt refresh-captcha" onclick="generateCaptcha()"></i>
+                            </div>
+                            <input type="text" id="captchaInput" class="form-input" placeholder="Enter captcha code" required style="padding-left: 16px;">
+                        </div>
+                    </div>
+
+                    <div class="extra-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="rememberMe"> Remember Me
+                        </label>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="login-btn-premium" id="loginButton">
                         <span id="btnText">Login</span>
+                        <i class="fas fa-arrow-right"></i>
                     </button>
 
-                    <div style="display: flex; align-items: center; margin: 15px 0; color: rgba(255,255,255,0.2);">
-                        <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
-                        <span style="padding: 0 10px; font-size: 0.75rem;">OR</span>
-                        <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
+                    <div class="separator">
+                        <span>Or continue with</span>
                     </div>
 
-                    <button type="button" class="google-login-btn" onclick="openGoogleModal()">
-                        <i class="fab fa-google"></i> Continue with Gmail
+                    <button type="button" class="google-btn-premium" id="googleLoginBtn">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="18" height="18">
+                        Continue with Gmail
                     </button>
-
-                    <!-- Add Management Links -->
-                    <div
-                        style="text-align: center; margin-top: 20px; font-size: 0.85rem; color: rgba(255,255,255,0.4);">
-                        <div style="margin-bottom: 10px;">
-                            <a href="#" style="color: var(--gold); text-decoration: none;">Forgot Password?</a>
-                        </div>
-                        <div>
-                            Don't have an account? <a href="#"
-                                style="color: var(--gold); text-decoration: none; font-weight: 600;">Sign Up</a>
-                        </div>
-                    </div>
-
-                    <div class="error-message" id="errorMessage">
-                        Invalid credentials. Please try again.
-                    </div>
                 </form>
 
-                <div class="demo-credentials">
-                    <h4><i class="fas fa-info-circle"></i> Demo Credentials</h4>
-                    <div id="studentCreds">
-                        <p><strong>Students:</strong> student1, student2, arjun_sharma / 12345678</p>
-                    </div>
-                    <div id="instructorCreds" style="display: none;">
-                        <p><strong>Instructor:</strong> instructor_demo / pass456</p>
-                    </div>
-                    <div id="adminCreds" style="display: none;">
-                        <p><strong>Admin:</strong> admin_root / root123</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="back-link">
-                <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Homepage</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Google Login Modal -->
-    <div class="google-modal-overlay" id="googleModalOverlay">
-        <div class="google-modal">
-            <span class="google-close" onclick="closeGoogleModal()">&times;</span>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png"
-                alt="Google" class="google-logo-img">
-
-            <!-- STEP 0: Account Selection -->
-            <div id="googleAccountStep">
-                <h2 class="google-title">Choose an account</h2>
-                <p class="google-subtitle">to continue to Mocha</p>
-
-                <div class="google-account-list">
-                    <div class="google-account-item"
-                        onclick="selectGoogleAccount('Raj Priyan', 'priyanraj067@gmail.com')">
-                        <div class="google-account-avatar">
-                            <img src="https://ui-avatars.com/api/?name=RP&background=1a73e8&color=fff" alt="Raj Priyan">
-                        </div>
-                        <div class="google-account-info">
-                            <span class="google-account-name">Raj Priyan</span>
-                            <span class="google-account-email">priyanraj067@gmail.com</span>
-                        </div>
-                    </div>
-
-                    <div class="google-account-item" onclick="useAnotherAccount()">
-                        <div class="google-account-avatar">
-                            <i class="fas fa-user-circle"></i>
-                        </div>
-                        <div class="google-account-info">
-                            <span class="google-account-name">Use another account</span>
-                        </div>
-                    </div>
+                <div id="errorMessage" style="color: #ef4444; font-size: 0.85rem; text-align: center; margin-top: 15px; display: none; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px;">
+                    Invalid credentials. Please try again.
                 </div>
 
-                <div class="google-account-footer-links">
-                    Before using this app, you can review Mocha's <a href="#">privacy policy</a> and <a href="#">terms
-                        of service</a>.
-                </div>
-
-                <div class="google-modal-footer-nav">
-                    <div>Help</div>
-                    <div>Privacy</div>
-                    <div>Terms</div>
-                </div>
-            </div>
-
-            <!-- STEP 1: Email -->
-            <div id="googleEmailStep">
-                <h2 class="google-title">Sign in</h2>
-                <p class="google-subtitle">Use your Google Account</p>
-                <div class="google-input-container">
-                    <input type="email" class="google-input" id="googleEmailInput" placeholder="Email or phone"
-                        autofocus>
-                </div>
-                <a href="#" class="google-forgot">Forgot email?</a>
-                <div style="text-align: left; color: #5f6368; font-size: 14px; margin-bottom: 40px;">
-                    Not your computer? Use Guest mode to sign in privately. <a href="#"
-                        style="color: #1a73e8; text-decoration: none;">Learn more</a>
-                </div>
-                <div class="google-footer">
-                    <a href="#" class="google-create-account">Create account</a>
-                    <button class="google-next-btn" onclick="startSecurityScan()">Next</button>
-                </div>
-            </div>
-
-            <!-- STEP 1.5: Security Scan (Online Tools Simulation) -->
-            <div id="googleScanStep" style="display: none;">
-                <h2 class="google-title">Verifying Identity</h2>
-                <p class="google-subtitle" style="font-size: 14px;">Powered by Google Online Verification Tools</p>
-
-                <div class="scanner-container" id="scannerList">
-                    <div class="scan-item" id="scan1">
-                        <i class="fas fa-shield-alt scan-icon" id="icon1"></i>
-                        <span id="text1">Google Safe Browsing Check...</span>
-                    </div>
-                    <div class="scan-item" id="scan2">
-                        <i class="fas fa-server scan-icon" id="icon2"></i>
-                        <span id="text2">Verifying MX Records & SMTP handshake...</span>
-                    </div>
-                    <div class="scan-item" id="scan3">
-                        <i class="fas fa-user-check scan-icon" id="icon3"></i>
-                        <span id="text3">Anti-Fraud & Domain Reputation Scan...</span>
-                    </div>
-                    <div class="scan-item" id="scan4">
-                        <i class="fas fa-envelope-open-text scan-icon" id="icon4"></i>
-                        <span id="text4">Sending Secure Verification Email...</span>
-                    </div>
-                </div>
-
-                <div class="progress-bar-mini">
-                    <div class="progress-fill-mini" id="scanProgress"></div>
-                </div>
-
-                <div style="text-align: center; color: #1a73e8; font-weight: 500; font-size: 13px;" id="scanStatusText">
-                    Establishing secure connection...
-                </div>
-            </div>
-
-            <!-- STEP 2: Password -->
-            <div id="googlePasswordStep" style="display: none;">
-                <h2 class="google-title">Welcome</h2>
-                <div class="google-profile-container">
-                    <div class="google-profile-pic" id="googleInitials">?</div>
-                    <span id="googleDisplayEmail">email@gmail.com</span>
-                    <i class="fas fa-chevron-down" style="font-size: 10px;"></i>
-                </div>
-                <div class="google-input-container">
-                    <input type="password" class="google-input" id="googlePasswordInput"
-                        placeholder="Enter your password">
-                </div>
-                <div style="text-align: left; margin-bottom: 40px;">
-                    <label style="color: #202124; font-size: 14px; display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox"> Show password
-                    </label>
-                </div>
-                <div class="google-footer">
-                    <a href="#" class="google-create-account">Forgot password?</a>
-                    <button class="google-next-btn" onclick="goToGoogleMobile()">Next</button>
-                </div>
-            </div>
-
-            <!-- STEP 3: Mobile Verification -->
-            <div id="googleMobileStep" style="display: none;">
-                <h2 class="google-title">Phone Verification</h2>
-                <p class="google-subtitle" style="font-size: 14px; margin-bottom: 20px;">
-                    Google needs to verify it's really you. Enter your mobile number to receive a verification code.
-                </p>
-                <div class="google-input-container">
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" class="google-input" style="width: 80px;" value="+91" disabled>
-                        <input type="tel" class="google-input" id="googleMobileInput" placeholder="Mobile number"
-                            maxlength="10">
-                    </div>
-                </div>
-                <div style="text-align: left; color: #5f6368; font-size: 13px; margin-bottom: 40px;">
-                    Standard rates apply. Google will send a one-time code to this number.
-                </div>
-                <div class="google-footer">
-                    <a href="javascript:void(0)" class="google-create-account" onclick="goToGoogleQr()">Pair device
-                        (QR)</a>
-                    <button class="google-next-btn" id="sendOtpBtn" onclick="sendGoogleMobileOtp()">
-                        <span id="otpBtnText">Send OTP</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- STEP 4: OTP Verification -->
-            <div id="googleOtpStep" style="display: none;">
-                <h2 class="google-title">2-Step Verification</h2>
-                <p class="google-subtitle" id="otpSubtitle" style="font-size: 14px; margin-bottom: 20px;">
-                    A 4-digit verification code was just sent to your mobile. Enter it below.
-                </p>
-                <div class="otp-input-group">
-                    <input type="text" class="otp-code" id="otp1" maxlength="1" onkeyup="moveOtp(this, 'otp2')">
-                    <input type="text" class="otp-code" id="otp2" maxlength="1" onkeyup="moveOtp(this, 'otp3')">
-                    <input type="text" class="otp-code" id="otp3" maxlength="1" onkeyup="moveOtp(this, 'otp4')">
-                    <input type="text" class="otp-code" id="otp4" maxlength="1" onkeyup="moveOtp(this, 'otp5')">
-                    <input type="text" class="otp-code" id="otp5" maxlength="1" onkeyup="moveOtp(this, 'otp6')">
-                    <input type="text" class="otp-code" id="otp6" maxlength="1">
-                </div>
-                <div style="text-align: left; color: #5f6368; font-size: 14px; margin-bottom: 40px;">
-                    <div id="resendTimer" style="margin-bottom: 10px; font-size: 13px; color: #1a73e8;">
-                        Resend code in <span id="timerSec">30</span>s
-                    </div>
-                    <label style="color: #202124; font-size: 14px; display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" checked> Don't ask again on this device
-                    </label>
-                </div>
-                <div class="google-footer">
-                    <a href="#" class="google-create-account" id="resendLink"
-                        style="pointer-events: none; opacity: 0.5;" onclick="sendGoogleMobileOtp()">Resend code</a>
-                    <button class="google-next-btn" onclick="handleGoogleLoginFinal()">Verify</button>
-                </div>
-                <!-- REAL GMAIL SYNC OPTION -->
-                <button id="fetchGmailBtn" onclick="syncAndFetchGmailOTP()">
-                    <i class="fab fa-google"></i>
-                    <span id="fetchText">Fetch code from my Google Mail</span>
-                    <div class="spinner" id="fetchSpinner"
-                        style="width: 14px; height: 14px; display: none; border-top-color: #EA4335;"></div>
-                </button>
-                <div
-                    style="margin-top: 20px; border-top: 1px solid #f1f3f4; padding-top: 15px; display: flex; justify-content: space-around;">
-                    <a href="javascript:void(0)" onclick="goToGoogleQr()"
-                        style="color: #1a73e8; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 5px;">
-                        <i class="fas fa-qrcode"></i> Try QR Pairing
-                    </a>
-                    <a href="javascript:void(0)" onclick="toggleGoogleHelp(true)"
-                        style="color: #1a73e8; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 5px;">
-                        <i class="fas fa-question-circle"></i> Troubleshooting
+                <div style="text-align: center; margin-top: 25px;">
+                    <a href="index.html" style="color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.85rem;">
+                        <i class="fas fa-arrow-left"></i> Back to Homepage
                     </a>
                 </div>
             </div>
-
-            <!-- STEP 6: QR PAIRING STEP -->
-            <div id="googleQrStep" style="display: none;">
-                <h2 class="google-title">Device Pairing</h2>
-                <p class="google-subtitle" style="font-size: 14px; margin-bottom: 20px;">
-                    Open <b>Google Messages</b> or your <b>Camera</b> on your phone and scan the code below.
-                </p>
-                <div
-                    style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #dadce0; width: 200px; margin: 0 auto 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative;">
-                    <i class="fas fa-qrcode" id="qrIcon"
-                        style="font-size: 150px; color: #202124; transition: all 0.3s ease;"></i>
-                    <div id="qrSuccess"
-                        style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 12px;">
-                        <i class="fas fa-check-circle"
-                            style="font-size: 60px; color: #1e8e3e; margin-bottom: 10px;"></i>
-                        <span style="font-weight: 600; color: #202124;">Paired!</span>
-                    </div>
-                </div>
-                <p style="font-size: 13px; color: #5f6368; margin-bottom: 30px;">
-                    This securely links your browser to your phone via encrypted E2E.
-                </p>
-                <div class="google-footer">
-                    <a href="javascript:void(0)" class="google-create-account" onclick="openGoogleModal()">Back</a>
-                    <button class="google-next-btn" onclick="handleQrVerification()">I've scanned it</button>
-                </div>
-            </div>
-
-            <!-- STEP 5: HELP SCREEN -->
-            <div id="googleHelpStep" class="google-help-screen" style="display: none;">
-                <h3><i class="fas fa-shield-check" style="color: #1e8e3e;"></i> 2-Step Verification Guide</h3>
-
-                <div class="help-item">
-                    <span class="help-title"><i class="fas fa-mobile-alt"></i> 1. Enable 2-Step Verification</span>
-                    <span class="help-desc">Go to Google Account > Security. Turn on 2-Step Verification and add a
-                        recovery phone number. Google will send OTPs via SMS to bridge your phone to this
-                        browser.</span>
-                </div>
-
-                <div class="help-item">
-                    <span class="help-title"><i class="fas fa-desktop"></i> 2. Use Google Messages for Web</span>
-                    <span class="help-desc">View OTPs directly on your computer by pairing your phone. Open Messages app
-                        > Device Pairing > Scan QR code at <i>messages.google.com</i>.</span>
-                </div>
-
-                <div class="help-item">
-                    <span class="help-title"><i class="fas fa-puzzle-piece"></i> 3. OTP Push for Chrome</span>
-                    <span class="help-desc">Install the "OTP Push" extension and mobile app. Scan the connection QR to
-                        allow instant code copying from phone to web.</span>
-                </div>
-
-                <div class="help-item">
-                    <span class="help-title"><i class="fas fa-tools"></i> Troubleshooting Delivery</span>
-                    <span class="help-desc">If no SMS arrives: Check internet connection, disable "Do Not Disturb", and
-                        verify the number in settings.</span>
-                </div>
-
-                <div class="help-item">
-                    <span class="help-title"><i class="fas fa-key"></i> Lockout Recovery</span>
-                    <span class="help-desc">Use the "Try another way" option to fall back to backup devices or security
-                        keys if your primary phone is unavailable.</span>
-                </div>
-
-                <div class="google-help-back" onclick="toggleGoogleHelp(false)">
-                    <i class="fas fa-arrow-left"></i> Back to verification
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Simulated SMS Toast -->
-    <div class="toast-notification" id="otpToast"
-        style="background: rgba(255, 255, 255, 0.95); color: #333; border-left: 5px solid #1a73e8; backdrop-filter: blur(15px);-webkit-backdrop-filter: blur(15px);">
-        <div class="toast-icon"
-            style="background: #1a73e8; color: white; width: 45px; height: 45px; font-size: 1.2rem;">
-            <i class="fas fa-comment"></i>
-        </div>
-        <div style="flex-grow: 1;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                <span id="toastSender" style="font-weight: 700; font-size: 13px; color: #1a73e8;">Google Security</span>
-                <span style="font-size: 11px; color: #777;">Now</span>
-            </div>
-            <div id="toastContent" style="font-size: 13.5px; line-height: 1.4; color: #444; font-weight: 500;">
-                G-123456 is your verification code.
-            </div>
-        </div>
+    <!-- Success Overlay -->
+    <div id="successOverlay" class="success-overlay" style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); display: none; z-index: 1000; justify-content: center; align-items: center; flex-direction: column; color: white;">
+        <i class="fas fa-check-circle" style="font-size: 5rem; color: #10b981; margin-bottom: 20px;"></i>
+        <h2 id="authStatusTitle">Login Successful</h2>
+        <p id="successMessage" style="color: rgba(255,255,255,0.7); margin-top: 10px;">Redirecting you to the portal...</p>
     </div>
 
-    <!-- System Authorization & Success Overlay -->
-    <div class="success-overlay" id="successOverlay">
-        <div id="authHeader">EXAM CONTROL SYSTEM</div>
-        <div id="authSubheader">Access Authorization</div>
+    <!-- Firebase Compat (v8) Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics-compat.js"></script>
 
-        <div style="position: relative; margin: 20px 0;">
-            <i class="fas fa-shield-alt" style="font-size: 4.5rem; color: var(--gold); opacity: 0.9;"></i>
-            <div class="spinner" id="authSpinner"
-                style="position: absolute; top: -10px; left: -10px; width: 90px; height: 90px; border-width: 2px; border-top-color: var(--gold); display: block;">
-            </div>
-        </div>
-
-        <h2 style="color: #ffffff; margin-top: 15px;" id="authStatusTitle">Validating Identity...</h2>
-        <p style="color: rgba(200,215,255,0.8); margin-bottom: 25px; min-height: 20px;" id="successMessage">Connecting
-            to 2-Step Verification bridge...</p>
-
-        <div id="authProgress"
-            style="width: 100%; height: 2px; background: rgba(255,255,255,0.1); border-radius: 1px; overflow: hidden; margin-top: 20px;">
-            <div id="authProgressFill"
-                style="width: 0%; height: 100%; background: var(--gold); transition: width 0.3s ease;"></div>
-        </div>
-    </div>
-
-    <!-- Mock Backend for Google Login -->
-    <script src="js/gmail.js"></script>
     <script>
-        // Pre-fill demo credentials based on role selection
-        (function () {
-            const canvas = document.getElementById('flowerCanvas');
-            const ctx = canvas.getContext('2d');
-            let W, H, frame = 0;
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAJX8qfKEuppyQAlna1EHAuELOXiBZcp_E",
+            authDomain: "exam-conytrol.firebaseapp.com",
+            projectId: "exam-conytrol",
+            storageBucket: "exam-conytrol.firebasestorage.app",
+            messagingSenderId: "689926425079",
+            appId: "1:689926425079:web:a0a5a64261de651ac7c6f2",
+            measurementId: "G-2XN374ZXKN"
+        };
 
-            function resize() {
-                W = canvas.width = window.innerWidth;
-                H = canvas.height = window.innerHeight;
-            }
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
 
-            // ---------- Background gradient (warm golden/cream) ----------
-            function drawBg() {
-                const grad = ctx.createLinearGradient(0, 0, W, H);
-                grad.addColorStop(0, '#f5e4b0');
-                grad.addColorStop(0.4, '#e8cc80');
-                grad.addColorStop(0.7, '#d4a840');
-                grad.addColorStop(1, '#b8860b');
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, W, H);
+        // Shims for existing logic
+        window.firebase_db = db;
+        window.firebase_auth = auth;
+        window.google_provider = googleProvider;
+        
+        // Expose functions for the form submit logic
+        window.fb_collection = (db, name) => db.collection(name);
+        window.fb_query = (ref, ...queries) => {
+            let q = ref;
+            queries.forEach(qr => { q = qr(q); });
+            return q;
+        };
+        window.fb_where = (field, op, val) => (ref) => ref.where(field, op, val);
+        window.fb_getDocs = (query) => query.get();
+        window.fb_signInWithPopup = (auth, provider) => auth.signInWithPopup(provider);
 
-                // Soft radial glow at center
-                const rg = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, Math.min(W, H) * 0.65);
-                rg.addColorStop(0, 'rgba(255,245,200,0.55)');
-                rg.addColorStop(1, 'rgba(180,120,0,0)');
-                ctx.fillStyle = rg;
-                ctx.fillRect(0, 0, W, H);
-            }
-
-            // ---------- Draw one lotus petal ----------
-            function drawPetal(ctx, cx, cy, len, width, angle, alpha, color) {
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.rotate(angle);
-                ctx.globalAlpha = alpha;
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.bezierCurveTo(
-                    width * 0.6, -len * 0.3,
-                    width * 0.6, -len * 0.7,
-                    0, -len
-                );
-                ctx.bezierCurveTo(
-                    -width * 0.6, -len * 0.7,
-                    -width * 0.6, -len * 0.3,
-                    0, 0
-                );
-                ctx.closePath();
-                ctx.fillStyle = color;
-                ctx.fill();
-                // Petal shine
-                const shine = ctx.createLinearGradient(0, 0, 0, -len);
-                shine.addColorStop(0, 'rgba(255,255,220,0.0)');
-                shine.addColorStop(0.4, 'rgba(255,255,200,0.18)');
-                shine.addColorStop(1, 'rgba(255,255,210,0.0)');
-                ctx.fillStyle = shine;
-                ctx.fill();
-                ctx.restore();
-            }
-
-            // ---------- Draw one lotus flower ----------
-            function drawFlower(cx, cy, size, baseAngle, phasePetals, alpha) {
-                const petalCount = 8;
-                const outerColor = `rgba(180,120,10,${alpha * 0.85})`;
-                const innerColor = `rgba(220,160,30,${alpha * 0.9})`;
-                const centreColor = `rgba(240,200,60,${alpha})`;
-
-                for (let i = 0; i < petalCount; i++) {
-                    const ang = baseAngle + (i / petalCount) * Math.PI * 2;
-                    const waver = Math.sin(phasePetals + i * 0.7) * 0.04;
-                    drawPetal(ctx, cx, cy, size, size * 0.45, ang + waver,
-                        alpha * (0.7 + 0.25 * Math.sin(phasePetals + i)), outerColor);
-                }
-                // Inner ring
-                for (let i = 0; i < petalCount; i++) {
-                    const ang = baseAngle + (i / petalCount) * Math.PI * 2 + Math.PI / petalCount;
-                    const waver = Math.sin(phasePetals * 1.2 + i * 0.5) * 0.05;
-                    drawPetal(ctx, cx, cy, size * 0.65, size * 0.32, ang + waver,
-                        alpha * 0.85, innerColor);
-                }
-                // Centre disc
-                ctx.save();
-                ctx.globalAlpha = alpha;
-                ctx.beginPath();
-                ctx.arc(cx, cy, size * 0.18, 0, Math.PI * 2);
-                const discGrad = ctx.createRadialGradient(cx - size * 0.05, cy - size * 0.05, 0, cx, cy, size * 0.18);
-                discGrad.addColorStop(0, '#fff0a0');
-                discGrad.addColorStop(1, centreColor);
-                ctx.fillStyle = discGrad;
-                ctx.fill();
-                ctx.restore();
-            }
-
-            // ---------- Draw a leaf ----------
-            function drawLeaf(cx, cy, len, angle, alpha) {
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.rotate(angle);
-                ctx.globalAlpha = alpha * 0.75;
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.bezierCurveTo(len * 0.35, -len * 0.25, len * 0.35, -len * 0.75, 0, -len);
-                ctx.bezierCurveTo(-len * 0.35, -len * 0.75, -len * 0.35, -len * 0.25, 0, 0);
-                ctx.closePath();
-                ctx.fillStyle = `rgba(140,95,5,0.6)`;
-                ctx.fill();
-                // Midrib
-                ctx.strokeStyle = `rgba(100,65,0,0.4)`;
-                ctx.lineWidth = 0.8;
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.lineTo(0, -len);
-                ctx.stroke();
-                ctx.restore();
-            }
-
-            // ---------- Floating sparkles ----------
-            const SPARKS = Array.from({ length: 55 }, () => ({
-                x: Math.random(), y: Math.random(),
-                r: 0.8 + Math.random() * 2,
-                speed: 0.0002 + Math.random() * 0.0005,
-                angle: -Math.PI / 2 + (Math.random() - 0.5) * 0.8,
-                phase: Math.random() * Math.PI * 2,
-                alpha: 0.2 + Math.random() * 0.5,
-            }));
-
-            // ---------- Floating flowers ----------
-            const FLOWERS = Array.from({ length: 7 }, (_, i) => ({
-                x: 0.05 + Math.random() * 0.9,
-                y: 0.5 + Math.random() * 0.7,       // start below view
-                size: 28 + Math.random() * 45,
-                speed: 0.00018 + Math.random() * 0.00025,
-                drift: (Math.random() - 0.5) * 0.0002,
-                phase: Math.random() * Math.PI * 2,
-                rotSpeed: (Math.random() - 0.5) * 0.008,
-                rot: Math.random() * Math.PI * 2,
-                alpha: 0.55 + Math.random() * 0.35,
-            }));
-
-            // ---------- Corner decorative flowers (static large) ----------
-            const DECO = [
-                { x: 0.82, y: 0.75, size: 90, rot: -0.4, alpha: 0.55 },
-                { x: 0.10, y: 0.20, size: 65, rot: 0.6, alpha: 0.45 },
-                { x: 0.90, y: 0.10, size: 50, rot: 1.2, alpha: 0.35 },
-            ];
-
-            // ---------- Main draw loop ----------
-            function draw() {
-                frame++;
-                ctx.clearRect(0, 0, W, H);
-
-                drawBg();
-
-                // Corner / decorative static flowers
-                DECO.forEach(d => {
-                    const pulse = 0.97 + 0.03 * Math.sin(frame * 0.015 + d.rot);
-                    drawFlower(d.x * W, d.y * H, d.size * pulse, d.rot + frame * 0.003, frame * 0.012, d.alpha);
-                    // Leaves
-                    drawLeaf(d.x * W, d.y * H, d.size * 1.3, d.rot + 0.9 + frame * 0.002, d.alpha);
-                    drawLeaf(d.x * W, d.y * H, d.size * 1.1, d.rot - 0.6 + frame * 0.002, d.alpha);
-                });
-
-                // Floating moving flowers
-                FLOWERS.forEach(f => {
-                    f.y -= f.speed;
-                    f.x += f.drift;
-                    f.rot += f.rotSpeed;
-                    f.phase += 0.01;
-                    if (f.y < -0.15) { f.y = 1.15; f.x = 0.05 + Math.random() * 0.9; }
-                    if (f.x < -0.1 || f.x > 1.1) f.drift *= -1;
-
-                    const wobble = Math.sin(f.phase) * 0.003;
-                    drawFlower(f.x * W, f.y * H, f.size, f.rot, f.phase, f.alpha);
-                    drawLeaf(f.x * W, f.y * H, f.size * 1.2, f.rot + 0.9 + wobble, f.alpha * 0.8);
-                    drawLeaf(f.x * W, f.y * H, f.size * 1.0, f.rot - 0.7 - wobble, f.alpha * 0.7);
-                });
-
-                // Sparkles
-                SPARKS.forEach(s => {
-                    s.y -= s.speed;
-                    s.x += Math.sin(s.phase + frame * 0.02) * 0.0003;
-                    if (s.y < -0.02) { s.y = 1.02; s.x = Math.random(); }
-                    const tw = (Math.sin(s.phase + frame * 0.04) + 1) / 2;
-                    ctx.save();
-                    ctx.globalAlpha = s.alpha * tw;
-                    ctx.fillStyle = `rgba(255,240,150,1)`;
-                    ctx.shadowColor = 'rgba(255,220,80,0.9)';
-                    ctx.shadowBlur = 6;
-                    ctx.beginPath();
-                    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.restore();
-                });
-
-                requestAnimationFrame(draw);
-            }
-
-            window.addEventListener('resize', resize);
-            resize();
-            draw();
-        })();
-
-        // Credentials for each role - UPDATED TO MATCH DASHBOARD ROLES
+        console.log("🔥 Firebase Compat Connected");
+    </script>
+    <script src="js/wave-bg.js"></script>
+    <script>
+        // Credentials for each role (Fallback)
         const CREDENTIALS = {
             student: {
-                usernames: ['student1', 'student2', 'student3', 'arjun_sharma', 'raj_kumar', 'priya_m'],
-                password: '12345678'
+                usernames: ['student1', 'student2', 'student3', 'arjun_sharma', 'raj_kumar', 'priya_m', 'raj'],
+                password: '9867',
+                examCode: 'CS101'
             },
             instructor: {
-                username: 'instructor_demo',
-                password: 'pass456'
+                username: 'instructor1',
+                password: 'Instruter@123'
             },
             admin: {
-                username: 'admin_root',
-                password: 'root123'
+                username: 'admin1',
+                password: 'Admin@123'
             }
         };
 
-        // Get exam subject from code
-        function getExamSubject(code) {
-            const subjectMap = {
-                'CS101': 'Computer Science 101',
-                'MATH202': 'Mathematics 202',
-                'PHYS101': 'Physics 101',
-                'ENG301': 'Engineering 301',
-                'BIO102': 'Biology 102',
-                'CHEM201': 'Chemistry 201',
-                'HIST101': 'History 101',
-                'ENG101': 'English 101'
-            };
-            return subjectMap[code] || `${code} Examination`;
+        // Captcha Logic
+        let currentCaptcha = "";
+        function generateCaptcha() {
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            let captcha = "";
+            for (let i = 0; i < 5; i++) {
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            currentCaptcha = captcha;
+            document.getElementById('captchaDisplay').textContent = captcha;
+            
+            // Add distortion effect to captcha text
+            const display = document.getElementById('captchaDisplay');
+            const fonts = ['Times New Roman', 'serif', 'monospace'];
+            display.style.fontFamily = fonts[Math.floor(Math.random() * fonts.length)];
+            display.style.letterSpacing = (Math.random() * 5 + 3) + 'px';
         }
 
-        // Role Selection Logic
-        const roleBtns = document.querySelectorAll('.role-btn');
-        const examCodeGroup = document.getElementById('examCodeGroup');
-        const examCodeInput = document.getElementById('examCode');
+        // Password Toggle
+        const passwordInput = document.getElementById('password');
+        const passwordToggle = document.getElementById('passwordToggle');
+        passwordToggle.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            passwordToggle.classList.toggle('fa-eye');
+            passwordToggle.classList.toggle('fa-eye-slash');
+        });
 
-        // Credential display elements
-        const studentCreds = document.getElementById('studentCreds');
-        const instructorCreds = document.getElementById('instructorCreds');
-        const adminCreds = document.getElementById('adminCreds');
-
+        // Role Selection
         let currentRole = 'student';
-
-        // Role selection function
         function selectRole(role) {
-            roleBtns.forEach(b => b.classList.remove('active'));
-            document.querySelector(`.role-btn[data-role="${role}"]`).classList.add('active');
             currentRole = role;
-
-            // Update form based on role
+            document.querySelectorAll('.role-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.getAttribute('data-role') === role);
+            });
+            
+            const examCodeGroup = document.getElementById('examCodeGroup');
+            const examCodeInput = document.getElementById('examCode');
+            const formTitle = document.getElementById('formTitle');
+            
             if (role === 'student') {
                 examCodeGroup.style.display = 'block';
                 examCodeInput.required = true;
-                examCodeInput.placeholder = 'Enter exam code (e.g., CS101)';
+                formTitle.textContent = 'Student Login';
             } else {
                 examCodeGroup.style.display = 'none';
                 examCodeInput.required = false;
+                formTitle.textContent = role === 'admin' ? 'Admin Login' : 'Instructor Login';
             }
-
-            // Update demo credentials display
-            studentCreds.style.display = role === 'student' ? 'block' : 'none';
-            instructorCreds.style.display = role === 'instructor' ? 'block' : 'none';
-            adminCreds.style.display = role === 'admin' ? 'block' : 'none';
+            
+            // Auto-fill logic for demo (remove in production)
+            fillDemo(role);
         }
 
-        // Add click event listeners to role buttons
-        roleBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                selectRole(btn.getAttribute('data-role'));
-            });
-        });
+        function fillDemo(role) {
+            const userIn = document.getElementById('username');
+            const passIn = document.getElementById('password');
+            const codeIn = document.getElementById('examCode');
+            
+            if (role === 'student') {
+                userIn.value = 'raj';
+                passIn.value = '9867';
+                codeIn.value = 'CS101';
+            } else if (role === 'instructor') {
+                userIn.value = 'instructor1';
+                passIn.value = 'Instruter@123';
+            } else if (role === 'admin') {
+                userIn.value = 'admin1';
+                passIn.value = 'Admin@123';
+            }
+        }
 
-        // Form Submission
-        document.getElementById('examLoginForm').addEventListener('submit', function (e) {
+        // Form Submit
+        document.getElementById('examLoginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
+            
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
+            const captcha = document.getElementById('captchaInput').value.trim().toUpperCase();
             const examCode = currentRole === 'student' ? document.getElementById('examCode').value.trim().toUpperCase() : '';
-            const loginBtn = document.getElementById('loginButton');
-            const spinner = document.getElementById('btnSpinner');
-            const btnText = document.getElementById('btnText');
+            
             const errorMessage = document.getElementById('errorMessage');
-            const successOverlay = document.getElementById('successOverlay');
-            const successMessage = document.getElementById('successMessage');
-
-            // Validate inputs
-            if (!username || !password) {
-                errorMessage.textContent = 'Please fill in all required fields';
+            const loginBtn = document.getElementById('loginButton');
+            const btnText = document.getElementById('btnText');
+            
+            // Validate Captcha
+            if (captcha !== currentCaptcha) {
+                errorMessage.textContent = "Invalid captcha code. Please try again.";
                 errorMessage.style.display = 'block';
+                generateCaptcha();
                 return;
             }
 
-            if (currentRole === 'student' && !examCode) {
-                errorMessage.textContent = 'Exam code is required for student access';
-                errorMessage.style.display = 'block';
-                return;
-            }
-
-            // Show loading state
+            // Loading state
             loginBtn.disabled = true;
-            spinner.style.display = 'inline-block';
             btnText.textContent = 'Authenticating...';
             errorMessage.style.display = 'none';
 
-            // Simulate API call delay
-            setTimeout(() => {
-                const roleCreds = CREDENTIALS[currentRole];
+            // 1. Try Firebase Auth First
+            let firebaseAuthSuccess = false;
+            try {
+                if (window.firebase_db && window.fb_query) {
+                    const usersRef = window.fb_collection(window.firebase_db, "users");
+                    const q = window.fb_query(usersRef, 
+                        window.fb_where("username", "==", username),
+                        window.fb_where("password", "==", password),
+                        window.fb_where("role", "==", currentRole)
+                    );
+                    const querySnapshot = await window.fb_getDocs(q);
+                    
+                    if (!querySnapshot.empty) {
+                        const userData = querySnapshot.docs[0].data();
+                        handleSuccess(userData.full_name || username, currentRole, examCode);
+                        firebaseAuthSuccess = true;
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn("Firebase Auth Error (falling back to local):", err);
+            }
+
+            if (!firebaseAuthSuccess) {
+                // 2. Fallback to local demo credentials
                 let isValid = false;
-
                 if (currentRole === 'student') {
-                    isValid = roleCreds.usernames.includes(username.toLowerCase()) && password === roleCreds.password;
-                } else {
-                    isValid = username === roleCreds.username && password === roleCreds.password;
+                    // Allow any username/password combination up to 15 characters
+                    isValid = (username.length > 0 && username.length <= 15) && 
+                              (password.length > 0 && password.length <= 15);
+                } else if (currentRole === 'instructor') {
+                    isValid = username === 'instructor1' && password === 'Instruter@123';
+                } else if (currentRole === 'admin') {
+                    isValid = username === 'admin1' && password === 'Admin@123';
                 }
 
-                // Check credentials
                 if (isValid) {
-                    // Successful login
-
-                    // Set success message based on role
-                    let redirectMessage = '';
-                    if (currentRole === 'student') {
-                        const examSubject = getExamSubject(examCode);
-                        redirectMessage = `Access granted for ${examSubject}. Redirecting to exam...`;
-
-                        // Store exam data in localStorage
-                        localStorage.setItem('isLoggedIn', 'true');
-                        localStorage.setItem('examLoggedIn', 'true');
-                        localStorage.setItem('examUsername', username);
-                        localStorage.setItem('examCode', examCode);
-                        localStorage.setItem('examSubject', examSubject);
-                        localStorage.setItem('examStartTime', new Date().toISOString());
-                    } else if (currentRole === 'instructor') {
-                        localStorage.setItem('isLoggedIn', 'true');
-                        redirectMessage = 'Instructor dashboard access granted. Redirecting...';
-                    } else {
-                        localStorage.setItem('isLoggedIn', 'true');
-                        redirectMessage = 'Admin panel access granted. Redirecting...';
-                    }
-
-                    successMessage.textContent = redirectMessage;
-
-                    // Store role info - CRITICAL FOR DASHBOARD
-                    localStorage.setItem('userRole', currentRole);
-                    localStorage.setItem('username', username);
-
-                    // Store full name based on role for dashboard display
-                    if (currentRole === 'admin') {
-                        localStorage.setItem('displayName', 'Raj Priyan.K');
-                        localStorage.setItem('userRoleDisplay', 'Administrator');
-                    } else if (currentRole === 'instructor') {
-                        localStorage.setItem('displayName', 'Dr. Priya Sharma');
-                        localStorage.setItem('userRoleDisplay', 'Instructor');
-                    } else {
-                        localStorage.setItem('displayName', 'Arjun Sharma');
-                        localStorage.setItem('userRoleDisplay', 'Student');
-                    }
-
-                    // Show success overlay
-                    successOverlay.classList.add('active');
-
-                    // Redirect based on role
-                    setTimeout(() => {
-                        if (currentRole === 'student') {
-                            window.location.href = 'exam.html';
-                        } else {
-                            window.location.href = 'dashboard.html';
+                    // --- NEW: AUTO-SAVE TO FIREBASE ---
+                    if (window.firebase_db) {
+                        try {
+                            // Document ID: Role_Username (uniqueness)
+                            const docId = currentRole + "_" + username;
+                            await window.firebase_db.collection("users").doc(docId).set({
+                                username: username,
+                                password: password,
+                                role: currentRole,
+                                full_name: currentRole.charAt(0).toUpperCase() + currentRole.slice(1) + " " + username,
+                                createdAt: new Date().toISOString()
+                            }, { merge: true });
+                            console.log("🔥 " + currentRole + " details successfully saved to Firestore Database!");
+                        } catch (e) {
+                            console.error("Could not save to Firestore:", e);
                         }
-                    }, 2000);
-
+                    }
+                    // ----------------------------------
+                    
+                    handleSuccess(username, currentRole, examCode);
                 } else {
-                    // Failed login
-                    errorMessage.textContent = `Invalid ${currentRole} credentials. Please use the demo credentials shown below.`;
+                    errorMessage.textContent = "Invalid username or password.";
                     errorMessage.style.display = 'block';
-
-                    // Reset button state
                     loginBtn.disabled = false;
-                    spinner.style.display = 'none';
                     btnText.textContent = 'Login';
+                    generateCaptcha();
                 }
-            }, 1500);
+            }
         });
+
+        function handleSuccess(username, role, examCode) {
+            const overlay = document.getElementById('successOverlay');
+            overlay.style.display = 'flex';
+            
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userRole', role);
+            localStorage.setItem('username', username);
+            
+            if (role === 'student') {
+                localStorage.setItem('examLoggedIn', 'true');
+                localStorage.setItem('examCode', examCode);
+                localStorage.setItem('examStartTime', new Date().toISOString());
+            }
+
+            // Display Name Setup
+            const displayNames = {
+                'admin1': 'Raj Priyan.K',
+                'instructor1': 'Dr. Priya Sharma',
+                'raj': 'Arjun Sharma'
+            };
+            localStorage.setItem('displayName', displayNames[username] || username);
+            
+            setTimeout(() => {
+                window.location.href = role === 'student' ? 'exam.html' : 'dashboard.html';
+            }, 1500);
+        }
 
         // Initialize
-        // (broken glass handled by canvas engine above)
+        window.onload = async () => {
+            generateCaptcha();
+            selectRole('student');
 
-        // Pre-fill demo credentials based on role selection
-        function fillDemoCredentials(role) {
-            if (role === 'student') {
-                document.getElementById('username').value = 'student1';
-                document.getElementById('password').value = '12345678';
-                document.getElementById('examCode').value = 'CS101';
-            } else if (role === 'instructor') {
-                document.getElementById('username').value = 'instructor_demo';
-                document.getElementById('password').value = 'pass456';
-            } else if (role === 'admin') {
-                document.getElementById('username').value = 'admin_root';
-                document.getElementById('password').value = 'root123';
-            }
-        }
-
-        // Auto-fill credentials when clicking on demo credentials
-        document.querySelectorAll('.demo-credentials p').forEach((item, index) => {
-            item.addEventListener('click', function () {
-                if (currentRole === 'student' && this.textContent.includes('Student')) {
-                    fillDemoCredentials('student');
-                } else if (currentRole === 'instructor' && this.textContent.includes('Instructor')) {
-                    fillDemoCredentials('instructor');
-                } else if (currentRole === 'admin' && this.textContent.includes('Admin')) {
-                    fillDemoCredentials('admin');
+            // --- DATABASE CONNECTION TEST ---
+            if (window.firebase_db) {
+                try {
+                    const testUserRef = window.firebase_db.collection('users').doc('testuser123');
+                    const doc = await testUserRef.get();
+                    if (!doc.exists) {
+                        await testUserRef.set({
+                            username: "testuser",
+                            password: "password123",
+                            role: "student",
+                            full_name: "Firebase Test Student"
+                        });
+                        console.log("✅ Database Connected: Test user automatically created in Firestore!");
+                    } else {
+                        console.log("✅ Database Connected: Connection verified successfully.");
+                    }
+                } catch (err) {
+                    console.error("❌ Database Connection Warning: ", err.message);
                 }
-            });
-        });
-
-        // Add CSS for clickable demo credentials
-        const style = document.createElement('style');
-        style.textContent = `
-            .demo-credentials p {
-                cursor: pointer;
-                transition: all 0.2s ease;
-                padding: 5px 10px;
-                border-radius: 5px;
             }
-            .demo-credentials p:hover {
-                background: var(--gold-light);
-                color: var(--primary-dark);
-            }
-        `;
-        document.head.appendChild(style);
 
-        // --- MOCK API SERVICE (Based on provided snippets) ---
-        const account = {
-            createPhoneToken: async (id, phoneNumber) => {
-                console.log(`Calling API: createPhoneToken for ID: ${id}, Phone: ${phoneNumber}`);
-                // Simulate network delay
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                return { userId: id, status: 'sent' };
-            },
-            createSession: async (userId, verificationCode) => {
-                console.log(`Calling API: createSession for User: ${userId}, Code: ${verificationCode}`);
-                // Simulate network delay
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                return { sessionId: 'sess_' + Math.random().toString(36).substr(2, 9) };
+            // --- GOOGLE LOGIN ATTACHMENT ---
+            const googleBtn = document.getElementById('googleLoginBtn');
+            if (googleBtn) {
+                googleBtn.addEventListener('click', async () => {
+                    const errorMessage = document.getElementById('errorMessage');
+                    if (!window.firebase_auth || !window.fb_signInWithPopup) {
+                        errorMessage.textContent = "Firebase is still loading or not initialized. Please refresh.";
+                        errorMessage.style.display = 'block';
+                        return;
+                    }
+
+                    try {
+                        const result = await window.fb_signInWithPopup(window.firebase_auth, window.google_provider);
+                        const user = result.user;
+                        console.log("Google Login Success:", user.displayName);
+                        handleSuccess(user.displayName, 'student', 'CS101');
+                    } catch (error) {
+                        console.error("Firebase Auth Error:", error);
+                        
+                        // Provide specific guidance based on the error code
+                        let errorDetail = "Google Sign-In failed.";
+                        
+                        if (error.code === 'auth/popup-closed-by-user') {
+                            errorDetail = "The sign-in popup was closed before completing. Please try again.";
+                        } else if (error.code === 'auth/unauthorized-domain') {
+                            errorDetail = "This domain is not authorized in your Firebase console. Add 'localhost' or your current URL to Authorized Domains.";
+                        } else if (window.location.protocol === 'file:') {
+                            errorDetail = "Security Error: Google Login will NOT work using 'file://'. Please run this through a Local Server (e.g., Live Server or localhost:8000).";
+                        } else {
+                            errorDetail = `Login Error: ${error.message} (${error.code})`;
+                        }
+
+                        errorMessage.innerHTML = `<strong>${errorDetail}</strong>`;
+                        errorMessage.style.display = 'block';
+                        
+                        // Show a helpful tip for Firebase Console
+                        if (error.code === 'auth/unauthorized-domain' || error.code === 'auth/operation-not-allowed') {
+                            console.info("TIP: Go to Firebase Console > Authentication > Settings > Authorized Domains and add your current origin.");
+                        }
+                    }
+                });
             }
         };
-
-        // GOOGLE MODAL HANDLERS
-        let googleEmail = '';
-
-        function openGoogleModal() {
-            document.getElementById('googleModalOverlay').style.display = 'flex';
-            document.getElementById('googleAccountStep').style.display = 'block';
-            document.getElementById('googleEmailStep').style.display = 'none';
-            document.getElementById('googleScanStep').style.display = 'none';
-            document.getElementById('googlePasswordStep').style.display = 'none';
-            document.getElementById('googleMobileStep').style.display = 'none';
-            document.getElementById('googleOtpStep').style.display = 'none';
-            document.getElementById('googleQrStep').style.display = 'none';
-            document.getElementById('googleHelpStep').style.display = 'none';
-        }
-
-        function closeGoogleModal() {
-            document.getElementById('googleModalOverlay').style.display = 'none';
-            // Reset all steps for next time
-            const steps = ['googleAccountStep', 'googleEmailStep', 'googleScanStep', 'googlePasswordStep', 'googleMobileStep', 'googleOtpStep', 'googleQrStep', 'googleHelpStep'];
-            steps.forEach(step => {
-                const el = document.getElementById(step);
-                if (el) el.style.display = 'none';
-            });
-        }
-
-        function selectGoogleAccount(name, email) {
-            googleEmail = email;
-            document.getElementById('googleAccountStep').style.display = 'none';
-            // Pre-fill the email input for the password step later
-            document.getElementById('googleEmailInput').value = email;
-            // Go directly to scan step
-            startSecurityScan(email);
-        }
-
-        function useAnotherAccount() {
-            document.getElementById('googleAccountStep').style.display = 'none';
-            document.getElementById('googleEmailStep').style.display = 'block';
-            document.getElementById('googleEmailInput').focus();
-        }
-
-        function toggleGoogleHelp(show) {
-            const currentStep = document.getElementById('googleOtpStep');
-            const qrStep = document.getElementById('googleQrStep');
-            const helpStep = document.getElementById('googleHelpStep');
-            const logo = document.querySelector('.google-logo-img');
-
-            if (show) {
-                currentStep.style.display = 'none';
-                qrStep.style.display = 'none';
-                helpStep.style.display = 'block';
-                logo.style.display = 'none';
-            } else {
-                // Return to OTP step by default when closing help
-                document.getElementById('googleOtpStep').style.display = 'block';
-                helpStep.style.display = 'none';
-                logo.style.display = 'block';
-            }
-        }
-
-        function goToGoogleQr() {
-            // Hide all other steps
-            document.getElementById('googleMobileStep').style.display = 'none';
-            document.getElementById('googleOtpStep').style.display = 'none';
-            document.getElementById('googleHelpStep').style.display = 'none';
-
-            // Show QR step
-            document.getElementById('googleQrStep').style.display = 'block';
-            document.getElementById('qrSuccess').style.display = 'none';
-        }
-
-        async function handleQrVerification() {
-            const successOverlay = document.getElementById('qrSuccess');
-            const googleLogo = document.querySelector('.google-logo-img');
-
-            // Show success tick on QR
-            successOverlay.style.display = 'flex';
-
-            setTimeout(() => {
-                handleGoogleLoginFinal(true); // Call final login with QR flag
-            }, 1000);
-        }
-
-        async function startSecurityScan(passedEmail) {
-            googleEmail = passedEmail || document.getElementById('googleEmailInput').value;
-            if (!googleEmail || !googleEmail.includes('@')) {
-                alert("Please enter a valid Google email.");
-                return;
-            }
-
-            document.getElementById('googleAccountStep').style.display = 'none';
-            document.getElementById('googleEmailStep').style.display = 'none';
-            document.getElementById('googleScanStep').style.display = 'block';
-
-            const items = [
-                { id: 1, text: "Google Safe Browsing Check Passed" },
-                { id: 2, text: "MX Records & SMTP Verified (gmail.com)" },
-                { id: 3, text: "Identity Authenticated via Online Tools" },
-                { id: 4, text: "Verification Email Sent via Secure SMTP" }
-            ];
-
-            const progress = document.getElementById('scanProgress');
-            const statusText = document.getElementById('scanStatusText');
-
-            for (let i = 0; i < items.length; i++) {
-                const step = items[i];
-                const element = document.getElementById(`scan${step.id}`);
-                const icon = document.getElementById(`icon${step.id}`);
-                const text = document.getElementById(`text${step.id}`);
-
-                element.classList.add('active');
-                icon.classList.add('scanning', 'fa-spin');
-                statusText.textContent = `Processing: ${text.textContent}`;
-
-                await new Promise(r => setTimeout(r, 1200));
-
-                icon.classList.remove('scanning', 'fa-spin');
-                icon.classList.add('done');
-                icon.className = 'fas fa-check-circle scan-icon done';
-                text.textContent = step.text;
-                progress.style.width = `${(i + 1) * 25}%`;
-            }
-
-            statusText.textContent = "Security clearance granted.";
-
-            setTimeout(() => {
-                goToGooglePassword();
-            }, 1000);
-        }
-
-        function goToGooglePassword() {
-            document.getElementById('googleScanStep').style.display = 'none';
-            document.getElementById('googlePasswordStep').style.display = 'block';
-            document.getElementById('googleDisplayEmail').textContent = googleEmail;
-            document.getElementById('googleInitials').textContent = googleEmail.charAt(0).toUpperCase();
-            document.getElementById('googlePasswordInput').focus();
-        }
-
-        async function handleGooglePassword() {
-            const password = document.getElementById('googlePasswordInput').value;
-            if (!password) {
-                alert("Please enter your password.");
-                return;
-            }
-
-            const btn = document.querySelector('#googlePasswordStep .google-next-btn');
-            const originalText = btn.innerHTML;
-
-            btn.innerHTML = '<div class="spinner" id="passSpinner" style="display: inline-block; width: 15px; height: 15px; border-top-color: #fff;"></div> Authenticating...';
-            btn.disabled = true;
-
-            try {
-                // REAL CODING INTEGRATION: Calling verifyPassword on the mock backend
-                const result = await GoogleAuthBackend.verifyPassword(googleEmail, password);
-
-                if (result.status === 'success') {
-                    // Success: Transition to the 2-Step Verification (Mobile Step)
-                    document.getElementById('googlePasswordStep').style.display = 'none';
-                    document.getElementById('googleMobileStep').style.display = 'block';
-                    document.getElementById('googleMobileInput').focus();
-                } else {
-                    // Failure: Reset button and show alert
-                    alert(result.message);
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
-            } catch (error) {
-                console.error("Password verification error:", error);
-                alert("Security handshake failed. Please check your connection.");
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }
-        async function syncAndFetchGmailOTP() {
-            const btn = document.getElementById('fetchGmailBtn');
-            const spinner = document.getElementById('fetchSpinner');
-            const text = document.getElementById('fetchText');
-            const statusText = document.getElementById('gmailStatusText');
-            const statusDot = document.getElementById('gmailStatusDot');
-
-            btn.disabled = true;
-            spinner.style.display = 'inline-block';
-            text.textContent = 'Connecting to Google Mail...';
-
-            try {
-                // REAL CODING SIMULATION: Calling the sync method from backend
-                const sync = await GoogleAuthBackend.syncWithGmail(googleEmail);
-
-                if (sync.status === 'success') {
-                    // Update global UI status
-                    statusDot.classList.add('gmail');
-                    statusText.textContent = 'CONNECTED';
-
-                    text.textContent = 'Searching Inbox...';
-
-                    // REAL CODING SIMULATION: Calling the fetch method from backend
-                    const result = await GoogleAuthBackend.fetchFromRealGmail(googleEmail);
-
-                    if (result.status === 'success') {
-                        // Success! Fill the OTP boxes automatically
-                        const otp = result.otp;
-                        for (let i = 0; i < 6; i++) {
-                            document.getElementById(`otp${i + 1}`).value = otp[i];
-                        }
-
-                        text.textContent = 'Verification code synced from Gmail!';
-                        setTimeout(() => {
-                            btn.style.borderColor = '#1e8e3e';
-                            btn.style.color = '#1e8e3e';
-                            text.innerHTML = '<i class="fas fa-check-circle"></i> Code Synced';
-                            spinner.style.display = 'none';
-                        }, 500);
-                    }
-                }
-            } catch (error) {
-                console.error("Gmail sync error:", error);
-                text.textContent = 'Failed to fetch. Try manual entry.';
-                btn.disabled = false;
-                spinner.style.display = 'none';
-            }
-        }
-
-        async function sendGoogleMobileOtp() {
-            const mobile = document.getElementById('googleMobileInput').value;
-            if (!mobile || mobile.length < 10) {
-                alert("Please enter a valid 10-digit mobile number.");
-                return;
-            }
-
-            const sendBtn = document.getElementById('sendOtpBtn');
-            const btnText = document.getElementById('otpBtnText');
-
-            // Start loading state
-            sendBtn.disabled = true;
-            btnText.textContent = "Sending...";
-
-            try {
-                // REAL CODING INTEGRATION: Using GoogleAuthBackend from js/gmail.js
-                const response = await GoogleAuthBackend.sendOTP(googleEmail, "+91" + mobile);
-
-                if (response.status === 'success') {
-                    document.getElementById('googleMobileStep').style.display = 'none';
-                    document.getElementById('googleOtpStep').style.display = 'block';
-                    document.getElementById('otpSubtitle').textContent = `A 6-digit verification code was just sent to ${mobile.substring(0, 2)}******${mobile.substring(8)}. Enter it below.`;
-
-                    // Reset button for possible resend
-                    sendBtn.disabled = false;
-                    btnText.textContent = "Send OTP";
-
-                    // Show Toast Notification with the REAL generated OTP
-                    const toast = document.getElementById('otpToast');
-                    const toastContent = document.getElementById('toastContent');
-                    const toastSender = document.getElementById('toastSender');
-
-                    toastSender.textContent = "Google Security";
-                    toastContent.innerHTML = `<b>G-${response.otp}</b> is your Google verification code.`;
-                    toast.classList.add('active');
-
-                    // Focus first OTP box
-                    document.getElementById('otp1').value = '';
-                    document.getElementById('otp1').focus();
-
-                    // Start Resend Timer
-                    let timeLeft = 30;
-                    const timerSec = document.getElementById('timerSec');
-                    const resendLink = document.getElementById('resendLink');
-                    const resendTimer = document.getElementById('resendTimer');
-
-                    resendTimer.style.display = 'block';
-                    resendLink.style.pointerEvents = 'none';
-                    resendLink.style.opacity = '0.5';
-
-                    const countdown = setInterval(() => {
-                        timeLeft--;
-                        timerSec.textContent = timeLeft;
-                        if (timeLeft <= 0) {
-                            clearInterval(countdown);
-                            resendLink.style.pointerEvents = 'auto';
-                            resendLink.style.opacity = '1';
-                            resendTimer.style.display = 'none';
-                        }
-                    }, 1000);
-
-                    // Auto-hide toast after 7 seconds
-                    setTimeout(() => {
-                        toast.classList.remove('active');
-                    }, 7000);
-                } else {
-                    alert("Error: " + response.message);
-                    sendBtn.disabled = false;
-                    btnText.textContent = "Send OTP";
-                }
-
-            } catch (error) {
-                console.error("OTP Error:", error);
-                alert("Error sending OTP. Please try again.");
-                sendBtn.disabled = false;
-                btnText.textContent = "Send OTP";
-            }
-        }
-
-        function moveOtp(current, nextId) {
-            if (current.value.length === 1) {
-                document.getElementById(nextId).focus();
-            }
-        }
-
-        async function handleGoogleLoginFinal(isQr = false) {
-            let otp = '';
-            if (!isQr) {
-                const otpCodes = Array.from(document.querySelectorAll('.otp-code')).map(i => i.value);
-                otp = otpCodes.join('');
-
-                if (otp.length < 6) {
-                    alert("Please enter the 6-digit verification code.");
-                    return;
-                }
-            }
-
-            closeGoogleModal();
-            const successOverlay = document.getElementById('successOverlay');
-            const successMessage = document.getElementById('successMessage');
-
-            successMessage.textContent = isQr ? "Syncing paired device..." : "Verifying security code in real-time...";
-            successOverlay.classList.add('active');
-
-            try {
-                // REAL CODING INTEGRATION: Using GoogleAuthBackend.verifyOTP
-                // If QR, we use a placeholder "QR_SYNC" as the OTP
-                const result = await GoogleAuthBackend.verifyOTP(googleEmail, isQr ? "QR_SYNC" : otp);
-
-                if (result.status === 'success' || isQr) {
-                    const fill = document.getElementById('authProgressFill');
-                    const statusTitle = document.getElementById('authStatusTitle');
-
-                    fill.style.width = '40%';
-                    statusTitle.textContent = "Identity Authenticated";
-                    successMessage.textContent = "Linking Gmail 2FA with Exam Control System...";
-
-                    setTimeout(async () => {
-                        fill.style.width = '75%';
-                        statusTitle.textContent = "Authorization Granted";
-                        successMessage.textContent = `Establishing Secure Session: ${result.sessionId || 'QR_SYNC'}`;
-
-                        // Store session data
-                        const sessionData = await GoogleAuthBackend.getExamSessionData(googleEmail);
-                        Object.keys(sessionData).forEach(key => {
-                            localStorage.setItem(key, sessionData[key]);
-                        });
-
-                        setTimeout(() => {
-                            fill.style.width = '100=';
-                            statusTitle.textContent = "System Access Enabled";
-                            successMessage.textContent = "Redirecting to Examination Engine...";
-
-                            setTimeout(() => {
-                                window.location.href = 'exam.html';
-                            }, 1000);
-                        }, 1200);
-                    }, 1500);
-                } else {
-                    // Verification failed
-                    successOverlay.classList.remove('active');
-                    alert(`Verification Failed: ${result.message}`);
-
-                    // Re-open modal at OTP step
-                    document.getElementById('googleModalOverlay').style.display = 'flex';
-                    document.getElementById('googleOtpStep').style.display = 'block';
-                    // Clear OTP inputs
-                    document.querySelectorAll('.otp-code').forEach(i => i.value = '');
-                    document.getElementById('otp1').focus();
-                }
-
-            } catch (error) {
-                console.error("Verification error:", error);
-                successOverlay.classList.remove('active');
-                alert("Error verifying security code. Please try again.");
-            }
-        }
     </script>
 </body>
 

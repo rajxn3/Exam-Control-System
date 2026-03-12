@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. Users Collection (Unified Access for all roles)
+    // Allows Student, Instructor, and Admin credentials to be checked or self-saved.
+    match /users/{userId} {
+      allow read: if true; 
+      allow write: if true; 
+    }
+    
+    // 2. Exams & Management (Instructor & Admin Access)
+    match /exams/{examId} {
+      allow read, write: if true; // Simplified for high-speed setup as requested
+    }
+
+    // 3. Results (Student & Admin/Instructor Access)
+    match /results/{resultId} {
+      allow read, write: if true;
+    }
+
+    // Default Security
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
